@@ -22,7 +22,7 @@ export default class NutrientsGrid extends React.Component<NutrientsGridProps, {
 
     private handleChange(nextNutrients: Nutrient[]) {
         const checkNutrients = nextNutrients.reduce((result, nutrient) => {
-            if (!result || !result[nutrient.type]) {
+            if (result && !result[nutrient.type]) {
                 result[nutrient.type] = true;
                 return result;
             }
