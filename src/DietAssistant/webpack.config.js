@@ -24,18 +24,29 @@ module.exports = (env) => {
         plugins: [new CheckerPlugin()]
     });
 
+    const extractCss = new ExtractTextPlugin('site.css');
+    const extractSass = new ExtractTextPlugin('styles.css');
+
     // Configuration for client-side bundle suitable for running in browsers
     const clientBundleOutputDir = './wwwroot/dist';
     const clientBundleConfig = merge(sharedConfig(), {
         entry: { 'main-client': './ClientApp/boot-client.tsx' },
         module: {
             rules: [
-                { test: /\.css$/, use: ExtractTextPlugin.extract({ use: isDevBuild ? 'css-loader' : 'css-loader?minimize' }) }
+                { test: /\.css$/, use: extractCss.extract({ use: isDevBuild ? 'css-loader' : 'css-loader?minimize' }) },
+                {
+                    test: /\.scss$/,
+                    use: extractSass.extract({
+                        use: [{ loader: "css-loader" }, { loader: "sass-loader" }],
+                        fallback: "style-loader"
+                    })
+                }
             ]
         },
         output: { path: path.join(__dirname, clientBundleOutputDir) },
         plugins: [
-            new ExtractTextPlugin('site.css'),
+            extractCss,
+            extractSass,
             new webpack.DllReferencePlugin({
                 context: __dirname,
                 manifest: require('./wwwroot/dist/vendor-manifest.json')
