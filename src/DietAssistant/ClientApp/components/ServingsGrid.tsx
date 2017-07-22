@@ -5,18 +5,27 @@ import SimpleGrid from './simpleGrid';
 interface ServingsGridProps
 {
     servings: Serving[];
-    onServingsChange: (this: void, servings: Serving[]) => void;
-    onCreateServing: (this: void) => void;
+    onChange: (this: void, servings: Serving[]) => void;
+    onCreate: (this: void, serving: Serving) => void;
 }
 
 export default class ServingsGrid extends React.Component<ServingsGridProps, {}> {
+    constructor() {
+        super();
+        this.handleCreate = this.handleCreate.bind(this);
+    }
+
+    private handleCreate() {
+        this.props.onCreate(new Serving('Serving', 100));
+    }
+
     public render() {
         const fields = { name: 'Serving name', grams: 'Weight, grams' };
         const data = this.props.servings;
 
         return (
             <SimpleGrid
-                fields={fields} data={data} onChange={this.props.onServingsChange} onCreate={this.props.onCreateServing}
+                fields={fields} data={data} onChange={this.props.onChange} onCreate={this.handleCreate}
             />
         );
     }
