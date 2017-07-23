@@ -1,4 +1,5 @@
 ﻿export interface INutrition {
+    name: string;
     unit: Serving;
     nutrients: Nutrient[];
 }
@@ -34,7 +35,7 @@ export class Serving {
     name: string;
     grams: number;
 
-    static hundredGrams = new Serving("100g", 100);
+    static oneGram = new Serving("gram", 1);
 }
 
 function changeServing(nutrient: Nutrient, from: Serving, to: Serving): Nutrient {
@@ -42,16 +43,31 @@ function changeServing(nutrient: Nutrient, from: Serving, to: Serving): Nutrient
 }
 
 export class Ingredient implements INutrition {
+    constructor(ingredient?: Partial<Ingredient>) {
+        if (ingredient) {
+            this.amount = ingredient.amount;
+            this.unit = ingredient.unit;
+            this.food = ingredient.food;
+        }
+    }
+
     amount: number;
     unit: Serving;
     food: IFood;
+    get name(): string {
+        return this.food.name;
+    }
     get nutrients(): Nutrient[] {
         return this.food.nutrients.map(nutrient => changeServing(nutrient, this.food.unit, this.unit));
+    }
+    get weight(): number {
+        return this.amount * this.unit.grams;
     }
 }
 
 function sumUpNutritions(nutritions: INutrition[]): INutrition {
     const result: { [id: number]: number } = {};
+    const name = 'Sum of nutritions';
     const unit = new Serving("Serving", 0);
 
     for (let nutrition of nutritions) {
@@ -63,10 +79,19 @@ function sumUpNutritions(nutritions: INutrition[]): INutrition {
     }
 
     const nutrients = Object.keys(result).map((type) => new Nutrient(NutrientType[type], result[type]));
-    return { unit, nutrients };
+    return { name, unit, nutrients };
 }
 
 export class Food implements IFood {
+    constructor(food?: Partial<Food>) {
+        if (food) {
+            this.name = food.name;
+            this.unit = food.unit;
+            this.servings = food.servings;
+            this.nutrients = food.nutrients;
+        }
+    }
+
     name: string;
     unit: Serving;
     servings: Serving[] = [];
