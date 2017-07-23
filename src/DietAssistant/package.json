@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "dependencies": {
     "@types/history": "4.6.0",
+    "@types/lodash": "^4.14.71",
     "@types/react": "15.0.35",
     "@types/react-dom": "15.5.1",
     "@types/react-hot-loader": "3.0.3",
@@ -26,6 +27,7 @@
     "history": "4.6.3",
     "jquery": "3.2.1",
     "json-loader": "0.5.4",
+    "lodash": "^4.17.4",
     "node-noop": "1.0.0",
     "react": "15.6.1",
     "react-dom": "15.6.1",

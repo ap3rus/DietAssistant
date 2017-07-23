@@ -1,4 +1,5 @@
 ﻿import * as React from 'react';
+import * as _ from 'lodash';
 
 interface FieldDefinition {
     name: string;
@@ -38,11 +39,11 @@ export default class SimpleGrid extends React.Component<SimpleGridProps, {}> {
     }
 
     private renderField(rowIndex: number, fieldId: string, value: string, field: FieldType) {
-        if (typeof (field) !== 'string' && field.values) {            
+        if (typeof (field) !== 'string' && field.values) {
             return (
                 <select className="form-control" value={value} onChange={(e) => this.handleRowFieldChange(rowIndex, fieldId, e.target.value)}>
-                    {Object.keys(field.values).map((valueId, index) => (
-                        <option key={index} value={valueId}>{field.values[valueId]}</option>
+                    {_.map(field.values, (name, value) => (
+                        <option key={value} value={value}>{name}</option>
                     ))}
                 </select>
             );
@@ -70,16 +71,16 @@ export default class SimpleGrid extends React.Component<SimpleGridProps, {}> {
                 <table className="table table-condensed">
                     <thead>
                         <tr>
-                            {fieldIds.map((fieldId, key) => (
+                            {_.map(fieldIds, (fieldId, key) => (
                                 <th key={key}>{this.getFieldName(fieldId)}</th>
                             ))}
                             <th key="remove"></th>
                         </tr>
                     </thead>
                     <tbody>
-                        {this.props.data.map((row, index) => (
+                        {_.map(this.props.data, (row, index) => (
                             <tr key={index}>
-                                {fieldIds.map((fieldId, key) => (
+                                {_.map(fieldIds, (fieldId, key) => (
                                     <td key={key}>
                                         {this.renderField(index, fieldId, row[fieldId], this.props.fields[fieldId])}
                                     </td>

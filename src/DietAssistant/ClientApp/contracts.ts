@@ -67,18 +67,18 @@ function sumUpNutritions(nutritions: INutrition[]): INutrition {
 }
 
 export class Food implements IFood {
-    name: String;
-    unit: Serving = Serving.hundredGrams;
-    servings: Serving[];
-    nutrients: Nutrient[];
+    name: string;
+    unit: Serving;
+    servings: Serving[] = [];
+    nutrients: Nutrient[] = [];
 }
 
 export class Recipe implements IFood {
     name: string;
     notes: string;
     unit: Serving;
-    servings: Serving[];
-    ingredients: Ingredient[];
+    servings: Serving[] = [];
+    ingredients: Ingredient[] = [];
     get nutrients(): Nutrient[] {
         const nutrition = sumUpNutritions(this.ingredients);
         return nutrition.nutrients.map(nutrient => changeServing(nutrient, nutrition.unit, this.unit));
@@ -88,7 +88,7 @@ export class Recipe implements IFood {
 export class Meal implements INutrition {
     name: string;
     time: Date;
-    foods: Ingredient[];
+    foods: Ingredient[] = [];
     get unit(): Serving {
         return sumUpNutritions(this.foods).unit;
     }
@@ -99,7 +99,7 @@ export class Meal implements INutrition {
 
 export class DayMealPlan implements INutrition {
     name: string;
-    meals: Meal[];
+    meals: Meal[] = [];
     get unit(): Serving {
         return sumUpNutritions(this.meals).unit;
     }
@@ -110,6 +110,6 @@ export class DayMealPlan implements INutrition {
 
 export class DayMealLog {
     date: Date;
-    meals: Meal[];
+    meals: Meal[] = [];
     plan: DayMealPlan;
 }

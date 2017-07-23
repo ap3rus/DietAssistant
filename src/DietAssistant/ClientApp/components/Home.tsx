@@ -2,11 +2,11 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import ServingsGrid from './ServingsGrid';
 import NutrientsGrid from './NutrientsGrid';
-import { Serving, Nutrient, NutrientType } from '../contracts';
+import { Food, Serving, Nutrient, NutrientType } from '../contracts';
+import FoodEditor from './foods/FoodEditor';
 
 interface HomeState {
-    servings: Serving[];
-    nutrients: Nutrient[];
+    food: Food;
 }
 
 export default class Home extends React.Component<RouteComponentProps<{}>, HomeState> {
@@ -17,35 +17,49 @@ export default class Home extends React.Component<RouteComponentProps<{}>, HomeS
         this.handleCreateServing = this.handleCreateServing.bind(this);
         this.handleNutrientsChange = this.handleNutrientsChange.bind(this);
         this.handleCreateNutrient = this.handleCreateNutrient.bind(this);
+        this.handleSelectUnit = this.handleSelectUnit.bind(this);
 
-        const servings = [];
-        const nutrients = [];
-        this.state = { servings, nutrients };
+        const food = new Food();
+        this.state = { food };
     }
 
     handleServingsChange(servings: Serving[]) {
-        this.setState({ servings });
+        const nextFood = { ...this.state.food, servings } as Food;
+        this.setState({ food: nextFood });
     }
 
     handleCreateServing(serving: Serving) {
-        this.setState({ servings: [...this.state.servings, serving] });
+        const nextFood = { ...this.state.food, servings: [...this.state.food.servings, serving] } as Food;
+        this.setState({ food: nextFood });
     }
 
     handleNutrientsChange(nutrients: Nutrient[]) {
-        this.setState({ nutrients });
+        const nextFood = { ...this.state.food, nutrients } as Food;
+        this.setState({ food: nextFood });
     }
 
-    handleCreateNutrient(nutrient) {
-        this.setState({ nutrients: [...this.state.nutrients, nutrient] });
+    handleCreateNutrient(nutrient: Nutrient) {
+        const nextFood = { ...this.state.food, nutrients: [...this.state.food.nutrients, nutrient] } as Food;
+        this.setState({ food: nextFood });
+    }
+
+    handleSelectUnit(unit: Serving) {
+        const nextFood = { ...this.state.food, unit } as Food;
+        this.setState({ food: nextFood });
     }
 
     public render() {
 
         return (
             <div>
-                <ServingsGrid onChange={this.handleServingsChange} servings={this.state.servings} onCreate={this.handleCreateServing} />
-                <hr />
-                <NutrientsGrid onChange={this.handleNutrientsChange} nutrients={this.state.nutrients} onCreate={this.handleCreateNutrient} />
+                <FoodEditor
+                    food={this.state.food}
+                    onChangeServings={this.handleServingsChange}
+                    onCreateServing={this.handleCreateServing}
+                    onChangeNutrients={this.handleNutrientsChange}
+                    onCreateNutrient={this.handleCreateNutrient}
+                    onSelectUnit={this.handleSelectUnit}
+                />
             </div>
         );
     }

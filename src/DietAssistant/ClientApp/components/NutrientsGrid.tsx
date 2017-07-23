@@ -1,6 +1,8 @@
 ﻿import * as React from 'react';
 import { Nutrient, NutrientType } from '../contracts';
+import * as enumHelpers from '../enumHelpers';
 import SimpleGrid from './simpleGrid';
+import * as _ from 'lodash';
 
 interface NutrientsGridProps
 {
@@ -17,11 +19,11 @@ export default class NutrientsGrid extends React.Component<NutrientsGridProps, {
     }
 
     private handleCreate() {
-        this.props.onCreate(new Nutrient(this.getAvailableNutrientType(), 0));
+        this.props.onCreate(new Nutrient(this.getNextAvailableNutrientType(), 0));
     }
 
     private handleChange(nextNutrients: Nutrient[]) {
-        const checkNutrients = nextNutrients.reduce((result, nutrient) => {
+        const checkNutrients = _.reduce(nextNutrients, (result, nutrient) => {
             if (result && !result[nutrient.type]) {
                 result[nutrient.type] = true;
                 return result;
@@ -33,31 +35,17 @@ export default class NutrientsGrid extends React.Component<NutrientsGridProps, {
         }
     }
 
-    private getAvailableNutrientType(): NutrientType {
-        const allNutrientTypes = Object.keys(NutrientType)
-            .filter(n => !isNaN(parseInt(n, 10)))
-            .map(key => parseInt(key, 10) as NutrientType);
+    private getNextAvailableNutrientType(): NutrientType {
+        const existingNutrientsByType = _.keyBy(this.props.nutrients, nutrient => nutrient.type);
 
-        const existingNutrientsByType = this.props.nutrients
-            .reduce((result, nutrient) => {
-                result[nutrient.type] = nutrient;
-                return result;
-            }, {});
-
-        return allNutrientTypes.find(type => !existingNutrientsByType[type]);
+        return _.find(enumHelpers.getValues(NutrientType), type => !existingNutrientsByType[type]);
     }
 
     public render() {
         const fields = {
             type: {
                 name: 'Nutrient',
-                values: Object.keys(NutrientType)
-                    .filter(n => !isNaN(parseInt(n, 10)))
-                    .map(key => ({ key: parseInt(key, 10) as NutrientType, value: NutrientType[key] }))
-                    .reduce((result, item) => {
-                        result[item.key] = item.value;
-                        return result;
-                    }, {})
+                values: enumHelpers.keyByValues(NutrientType)
             },
             grams: 'Amount, grams'
         };
@@ -65,7 +53,7 @@ export default class NutrientsGrid extends React.Component<NutrientsGridProps, {
 
         return (
             <SimpleGrid
-                fields={fields} data={data} onChange={this.handleChange} onCreate={this.handleCreate} canCreate={this.getAvailableNutrientType() !== undefined}
+                fields={fields} data={data} onChange={this.handleChange} onCreate={this.handleCreate} canCreate={this.getNextAvailableNutrientType() !== undefined}
             />
         );
     }
