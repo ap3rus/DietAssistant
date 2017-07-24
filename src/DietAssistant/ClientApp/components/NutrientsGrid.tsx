@@ -7,11 +7,17 @@ import * as _ from 'lodash';
 interface NutrientsGridProps
 {
     nutrients: Nutrient[];
-    onChange: (this: void, nutrients: Nutrient[]) => void;
-    onCreate: (this: void, nutrient: Nutrient) => void;
+    isReadOnly?: boolean;
+    onChange?: (this: void, nutrients: Nutrient[]) => void;
+    onCreate?: (this: void, nutrient: Nutrient) => void;
 }
 
 export default class NutrientsGrid extends React.Component<NutrientsGridProps, {}> {
+    public static defaultProps: Partial<NutrientsGridProps> = {
+        onChange: () => { },
+        onCreate: () => { }
+    };
+
     constructor() {
         super();
         this.handleCreate = this.handleCreate.bind(this);
@@ -53,7 +59,12 @@ export default class NutrientsGrid extends React.Component<NutrientsGridProps, {
 
         return (
             <SimpleGrid
-                fields={fields} data={data} onChange={this.handleChange} onCreate={this.handleCreate} canCreate={this.getNextAvailableNutrientType() !== undefined}
+                fields={fields}
+                data={data}
+                onChange={this.handleChange}
+                onCreate={this.handleCreate}
+                canCreate={!this.props.isReadOnly && this.getNextAvailableNutrientType() !== undefined}
+                isReadOnly={this.props.isReadOnly}
             />
         );
     }

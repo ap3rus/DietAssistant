@@ -33,6 +33,9 @@ export default class FoodEditor extends React.Component<FoodEditorProps, {}> {
 
     handleCreateServing(serving: Serving) {
         const nextFood = new Food({ ...this.props.food, servings: [...this.props.food.servings, serving] });
+        if (!nextFood.unit) {
+            nextFood.unit = serving;
+        }
         this.props.onChangeFood(nextFood);
     }
 

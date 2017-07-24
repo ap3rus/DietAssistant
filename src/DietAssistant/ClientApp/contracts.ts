@@ -46,8 +46,8 @@ export class Ingredient implements INutrition {
     constructor(ingredient?: Partial<Ingredient>) {
         if (ingredient) {
             this.amount = ingredient.amount;
-            this.unit = ingredient.unit;
             this.food = ingredient.food;
+            this.unit = ingredient.unit || this.food && this.food.unit;
         }
     }
 
@@ -61,7 +61,12 @@ export class Ingredient implements INutrition {
         return this.food.nutrients.map(nutrient => changeServing(nutrient, this.food.unit, this.unit));
     }
     get weight(): number {
-        return this.amount * this.unit.grams;
+        const weight = this.amount * (this.unit && this.unit.grams);
+        if (isNaN(weight)) {
+            return null;
+        }
+
+        return weight;
     }
 }
 
@@ -71,7 +76,11 @@ function sumUpNutritions(nutritions: INutrition[]): INutrition {
     const unit = new Serving("Serving", 0);
 
     for (let nutrition of nutritions) {
-        unit.grams += nutrition.unit.grams;
+        unit.grams += nutrition.unit && nutrition.unit.grams || 0;
+        if (!nutrition.nutrients) {
+            continue;
+        }
+
         for (let nutrient of nutrition.nutrients) {
             const current: number = result[nutrient.type] || 0;
             result[nutrient.type] = current + nutrient.grams;
@@ -87,8 +96,8 @@ export class Food implements IFood {
         if (food) {
             this.name = food.name;
             this.unit = food.unit;
-            this.servings = food.servings;
-            this.nutrients = food.nutrients;
+            this.servings = food.servings || [];
+            this.nutrients = food.nutrients || [];
         }
     }
 
@@ -99,6 +108,16 @@ export class Food implements IFood {
 }
 
 export class Recipe implements IFood {
+    constructor(recipe?: Partial<Recipe>) {
+        if (recipe) {
+            this.name = recipe.name;
+            this.notes = recipe.notes;
+            this.unit = recipe.unit;
+            this.servings = recipe.servings || [];
+            this.ingredients = recipe.ingredients || [];
+        }
+    }
+
     name: string;
     notes: string;
     unit: Serving;

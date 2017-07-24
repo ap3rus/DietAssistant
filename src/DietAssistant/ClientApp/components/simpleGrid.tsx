@@ -17,13 +17,15 @@ interface SimpleGridProps {
     fields: { [field: string]: FieldType };
     canCreate?: boolean;
     canRemove?: boolean;
-    onChange: (this: void, data: Array<any>) => void;
+    isReadOnly?: boolean;
+    onChange?: (this: void, data: Array<any>) => void;
     onCreate?: (this: void) => void;
     cloneRow?: (this: void, row: any) => any;
 }
 
 export default class SimpleGrid extends React.Component<SimpleGridProps, {}> {
     public static defaultProps: Partial<SimpleGridProps> = {
+        onChange: () => { },
         onCreate: () => { }
     };
 
@@ -51,7 +53,7 @@ export default class SimpleGrid extends React.Component<SimpleGridProps, {}> {
     }
 
     private renderField(rowIndex: number, propertyName: string, value: any, field: FieldType) {
-        if (typeof (field) !== 'string' && field.isReadOnly) {
+        if (this.props.isReadOnly || typeof (field) !== 'string' && field.isReadOnly) {
             return value;
         } else if (typeof (field) !== 'string' && field.values) {
             const values = typeof (field.values) === 'function' ? field.values(this.props.data[rowIndex]) : field.values;

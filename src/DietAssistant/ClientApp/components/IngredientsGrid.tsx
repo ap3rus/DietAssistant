@@ -6,6 +6,7 @@ import SimpleGrid from './simpleGrid';
 interface IngredientsGridProps {
     ingredients: Ingredient[];
     onChange: (this: void, ingredients: Ingredient[]) => void;
+    onCreate: (this: void) => void;
 }
 
 export default class IngredientsGrid extends React.Component<IngredientsGridProps, {}> {
@@ -37,7 +38,7 @@ export default class IngredientsGrid extends React.Component<IngredientsGridProp
 
         return (
             <SimpleGrid
-                fields={fields} data={data} onChange={this.props.onChange} canCreate={false} canRemove={false} cloneRow={ingredient => new Ingredient(ingredient)}
+                fields={fields} data={data} onChange={this.props.onChange} onCreate={this.props.onCreate} cloneRow={ingredient => new Ingredient(ingredient)}
             />
         );
     }
