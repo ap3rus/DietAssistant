@@ -18,7 +18,7 @@ interface SimpleGridProps {
     canCreate?: boolean;
     canRemove?: boolean;
     isReadOnly?: boolean;
-    onChange?: (this: void, data: Array<any>) => void;
+    onChange?: (this: void, result: { data: Array<any>, removed?: any, updated?: any }) => void;
     onCreate?: (this: void) => void;
     cloneRow?: (this: void, row: any) => any;
 }
@@ -42,14 +42,15 @@ export default class SimpleGrid extends React.Component<SimpleGridProps, {}> {
         const nextData = [...this.props.data];
         nextData[rowIndex] = nextRow;
 
-        this.props.onChange(nextData);
+        this.props.onChange({ data: nextData, updated: nextRow });
     }
 
     private handleRowRemove(rowIndex: number) {
         const nextData = [...this.props.data];
+        const removed = this.props.data[rowIndex];
         nextData.splice(rowIndex, 1);
 
-        this.props.onChange(nextData);
+        this.props.onChange({ data: nextData, removed });
     }
 
     private renderField(rowIndex: number, propertyName: string, value: any, field: FieldType) {

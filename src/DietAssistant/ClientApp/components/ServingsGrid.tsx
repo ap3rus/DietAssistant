@@ -13,10 +13,15 @@ export default class ServingsGrid extends React.Component<ServingsGridProps, {}>
     constructor() {
         super();
         this.handleCreate = this.handleCreate.bind(this);
+        this.handleChange = this.handleChange.bind(this);
     }
 
     private handleCreate() {
         this.props.onCreate(new Serving('Serving', 100));
+    }
+
+    private handleChange({ data }: { data: Serving[] }) {
+        this.props.onChange(data);
     }
 
     public render() {
@@ -25,7 +30,7 @@ export default class ServingsGrid extends React.Component<ServingsGridProps, {}>
 
         return (
             <SimpleGrid
-                fields={fields} data={data} onChange={this.props.onChange} onCreate={this.handleCreate}
+                fields={fields} data={data} onChange={this.handleChange} onCreate={this.handleCreate}
             />
         );
     }

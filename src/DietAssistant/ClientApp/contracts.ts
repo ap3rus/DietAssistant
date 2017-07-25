@@ -1,4 +1,6 @@
-﻿export interface INutrition {
+﻿// todo get rid of classes
+
+export interface INutrition {
     name: string;
     unit: Serving;
     nutrients: Nutrient[];

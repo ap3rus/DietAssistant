@@ -15,7 +15,7 @@ export interface ApplicationState {
 export const reducers = {
     counter: Counter.reducer,
     weatherForecasts: WeatherForecasts.reducer,
-    foodsReducer
+    foods: foodsReducer
 };
 
 // This type can be used as a hint on action creators so that its 'dispatch' and 'getState' params are

@@ -10,6 +10,15 @@ interface IngredientsGridProps {
 }
 
 export default class IngredientsGrid extends React.Component<IngredientsGridProps, {}> {
+    constructor() {
+        super();
+        this.handleChange = this.handleChange.bind(this);
+    }
+
+    private handleChange({ data }: { data: Ingredient[] }) {
+        this.props.onChange(data);
+    }
+
     public render() {
         const fields = {
             name: {
@@ -38,7 +47,7 @@ export default class IngredientsGrid extends React.Component<IngredientsGridProp
 
         return (
             <SimpleGrid
-                fields={fields} data={data} onChange={this.props.onChange} onCreate={this.props.onCreate} cloneRow={ingredient => new Ingredient(ingredient)}
+                fields={fields} data={data} onChange={this.handleChange} onCreate={this.props.onCreate} cloneRow={ingredient => new Ingredient(ingredient)}
             />
         );
     }
