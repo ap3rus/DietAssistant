@@ -62,7 +62,7 @@ export default class SimpleGrid extends React.Component<SimpleGridProps, {}> {
         if (this.props.isReadOnly || typeof (field) !== 'string' && field.isReadOnly) {
             return value;
         } else if (typeof (field) !== 'string' && field.values) {
-            const values = typeof (field.values) === 'function' ? field.values(this.props.data[rowIndex]) : field.values;
+            const values = typeof (field.values) === 'function' ? field.values(row) : field.values;
 
             return (
                 <select className="form-control" value={value} onChange={(e) => this.handleRowFieldChange(rowIndex, fieldId, e.target.value, field)}>
