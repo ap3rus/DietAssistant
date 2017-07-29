@@ -1,15 +1,15 @@
 ﻿import * as React from 'react';
-import { Nutrient, NutrientType } from '../contracts';
+import { INutrient, NutrientType } from '../contracts';
 import * as enumHelpers from '../enumHelpers';
 import SimpleGrid from './simpleGrid';
 import * as _ from 'lodash';
 
 interface NutrientsGridProps
 {
-    nutrients: Nutrient[];
+    nutrients: INutrient[];
     isReadOnly?: boolean;
-    onChange?: (this: void, nutrients: Nutrient[]) => void;
-    onCreate?: (this: void, nutrient: Nutrient) => void;
+    onChange?: (this: void, nutrients: INutrient[]) => void;
+    onCreate?: (this: void, nutrient: INutrient) => void;
 }
 
 export default class NutrientsGrid extends React.Component<NutrientsGridProps, {}> {
@@ -25,10 +25,10 @@ export default class NutrientsGrid extends React.Component<NutrientsGridProps, {
     }
 
     private handleCreate() {
-        this.props.onCreate(new Nutrient(this.getNextAvailableNutrientType(), 0));
+        this.props.onCreate({ type: this.getNextAvailableNutrientType(), grams: 0 });
     }
 
-    private handleChange({ data }: { data: Nutrient[] }) {        
+    private handleChange({ data }: { data: INutrient[] }) {        
         const checkNutrients = _.reduce(data, (result, nutrient) => {
             if (result && !result[nutrient.type]) {
                 result[nutrient.type] = true;

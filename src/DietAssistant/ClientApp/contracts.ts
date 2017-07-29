@@ -3,7 +3,7 @@
 export interface INutrition {
     name: string;
     unit: Serving;
-    nutrients: Nutrient[];
+    nutrients: INutrient[];
 }
 
 export interface IFood extends INutrition {
@@ -18,12 +18,7 @@ export enum NutrientType {
     Sodium
 }
 
-export class Nutrient {
-    constructor(type: NutrientType, grams: number) {
-        this.type = type;
-        this.grams = grams;
-    }
-
+export interface INutrient {
     type: NutrientType;
     grams: number;
 }
@@ -40,8 +35,8 @@ export class Serving {
     static oneGram = new Serving("gram", 1);
 }
 
-function changeServing(nutrient: Nutrient, from: Serving, to: Serving): Nutrient {
-    return new Nutrient(nutrient.type, nutrient.grams * to.grams / from.grams);
+function changeServing(nutrient: INutrient, from: Serving, to: Serving): INutrient {
+    return { type: nutrient.type, grams: nutrient.grams * to.grams / from.grams };
 }
 
 export class Ingredient implements INutrition {
@@ -59,7 +54,7 @@ export class Ingredient implements INutrition {
     get name(): string {
         return this.food.name;
     }
-    get nutrients(): Nutrient[] {
+    get nutrients(): INutrient[] {
         return this.food.nutrients.map(nutrient => changeServing(nutrient, this.food.unit, this.unit));
     }
     get weight(): number {
@@ -89,7 +84,7 @@ function sumUpNutritions(nutritions: INutrition[]): INutrition {
         }
     }
 
-    const nutrients = Object.keys(result).map((type) => new Nutrient(NutrientType[type], result[type]));
+    const nutrients = Object.keys(result).map((type) => ({ type: NutrientType[type], grams: result[type] }));
     return { name, unit, nutrients };
 }
 
@@ -106,7 +101,7 @@ export class Food implements IFood {
     name: string;
     unit: Serving;
     servings: Serving[] = [];
-    nutrients: Nutrient[] = [];
+    nutrients: INutrient[] = [];
 }
 
 export class Recipe implements IFood {
@@ -125,7 +120,7 @@ export class Recipe implements IFood {
     unit: Serving;
     servings: Serving[] = [];
     ingredients: Ingredient[] = [];
-    get nutrients(): Nutrient[] {
+    get nutrients(): INutrient[] {
         const nutrition = sumUpNutritions(this.ingredients);
         return nutrition.nutrients.map(nutrient => changeServing(nutrient, nutrition.unit, this.unit));
     }
@@ -138,7 +133,7 @@ export class Meal implements INutrition {
     get unit(): Serving {
         return sumUpNutritions(this.foods).unit;
     }
-    get nutrients(): Nutrient[] {
+    get nutrients(): INutrient[] {
         return sumUpNutritions(this.foods).nutrients;
     }
 }
@@ -149,7 +144,7 @@ export class DayMealPlan implements INutrition {
     get unit(): Serving {
         return sumUpNutritions(this.meals).unit;
     }
-    get nutrients(): Nutrient[] {
+    get nutrients(): INutrient[] {
         return sumUpNutritions(this.meals).nutrients;
     }
 }

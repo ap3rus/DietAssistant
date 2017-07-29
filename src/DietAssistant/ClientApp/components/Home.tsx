@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import ServingsGrid from './ServingsGrid';
 import NutrientsGrid from './NutrientsGrid';
-import { Recipe, Food, Serving, Nutrient, NutrientType, Ingredient } from '../contracts';
+import { Recipe, Food, Serving, INutrient, NutrientType, Ingredient } from '../contracts';
 import FoodEditor from './foods/FoodEditor';
 import IngredientsGrid from './IngredientsGrid';
 import RecipeEditor from './recipes/RecipeEditor';
