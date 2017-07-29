@@ -1,12 +1,12 @@
 ﻿import * as React from 'react';
-import { Serving } from '../contracts';
+import { IServing } from '../contracts';
 import SimpleGrid from './simpleGrid';
 
 interface ServingsGridProps
 {
-    servings: Serving[];
-    onChange: (this: void, servings: Serving[]) => void;
-    onCreate: (this: void, serving: Serving) => void;
+    servings: IServing[];
+    onChange: (this: void, servings: IServing[]) => void;
+    onCreate: (this: void, serving: IServing) => void;
 }
 
 export default class ServingsGrid extends React.Component<ServingsGridProps, {}> {
@@ -17,10 +17,10 @@ export default class ServingsGrid extends React.Component<ServingsGridProps, {}>
     }
 
     private handleCreate() {
-        this.props.onCreate(new Serving('Serving', 100));
+        this.props.onCreate({ name: 'Serving', grams: 100 });
     }
 
-    private handleChange({ data }: { data: Serving[] }) {
+    private handleChange({ data }: { data: IServing[] }) {
         this.props.onChange(data);
     }
 

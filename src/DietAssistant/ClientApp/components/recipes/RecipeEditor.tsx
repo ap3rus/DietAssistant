@@ -1,6 +1,6 @@
 ﻿import * as React from 'react';
 import * as _ from 'lodash';
-import { Recipe, Food, Serving, INutrient, NutrientType, Ingredient } from '../../contracts';
+import { Recipe, Food, IServing, INutrient, NutrientType, Ingredient } from '../../contracts';
 import ServingsGrid from '../ServingsGrid';
 import NutrientsGrid from '../NutrientsGrid';
 import IngredientsGrid from '../IngredientsGrid';
@@ -26,12 +26,12 @@ export default class RecipeEditor extends React.Component<RecipeEditorProps, {}>
         this.props.onChange(nextRecipe);
     }
 
-    handleChangeServings(servings: Serving[]) {
+    handleChangeServings(servings: IServing[]) {
         const nextRecipe = new Recipe({ ...this.props.recipe, servings });
         this.props.onChange(nextRecipe);
     }
 
-    handleCreateServing(serving: Serving) {
+    handleCreateServing(serving: IServing) {
         const nextRecipe = new Recipe({ ...this.props.recipe, servings: [...this.props.recipe.servings, serving] });
         if (!nextRecipe.unit) {
             nextRecipe.unit = serving;

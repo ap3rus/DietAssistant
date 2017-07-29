@@ -1,6 +1,6 @@
 ﻿import * as React from 'react';
 import * as _ from 'lodash';
-import { Ingredient, Serving } from '../contracts';
+import { Ingredient, IServing } from '../contracts';
 import SimpleGrid from './simpleGrid';
 
 interface IngredientsGridProps {
@@ -29,7 +29,7 @@ export default class IngredientsGrid extends React.Component<IngredientsGridProp
             'unit.grams': {
                 name: 'Unit',
                 values: (row: Ingredient) => {
-                    return _.reduce(row.food.servings, (result, serving: Serving) => {
+                    return _.reduce(row.food.servings, (result, serving: IServing) => {
                         result[serving.grams] = serving.name;
                         return result;
                     }, {});

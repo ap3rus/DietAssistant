@@ -1,6 +1,6 @@
 ﻿import * as React from 'react';
 import * as _ from 'lodash';
-import { Food, Serving, INutrient, NutrientType } from '../../contracts';
+import { Food, IServing, INutrient, NutrientType } from '../../contracts';
 import ServingsGrid from '../ServingsGrid';
 import NutrientsGrid from '../NutrientsGrid';
 
@@ -26,12 +26,12 @@ export default class FoodEditor extends React.Component<FoodEditorProps, {}> {
         this.props.onChangeFood(nextFood);
     }
 
-    handleChangeServings(servings: Serving[]) {
+    handleChangeServings(servings: IServing[]) {
         const nextFood = new Food({ ...this.props.food, servings });
         this.props.onChangeFood(nextFood);
     }
 
-    handleCreateServing(serving: Serving) {
+    handleCreateServing(serving: IServing) {
         const nextFood = new Food({ ...this.props.food, servings: [...this.props.food.servings, serving] });
         if (!nextFood.unit) {
             nextFood.unit = serving;

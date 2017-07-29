@@ -2,12 +2,12 @@
 
 export interface INutrition {
     name: string;
-    unit: Serving;
+    unit: IServing;
     nutrients: INutrient[];
 }
 
 export interface IFood extends INutrition {
-    servings: Serving[];
+    servings: IServing[];
 }
 
 export enum NutrientType {
@@ -23,19 +23,12 @@ export interface INutrient {
     grams: number;
 }
 
-export class Serving {
-    constructor(name: string, grams: number) {
-        this.name = name;
-        this.grams = grams;
-    }
-
+export interface IServing {
     name: string;
     grams: number;
-
-    static oneGram = new Serving("gram", 1);
 }
 
-function changeServing(nutrient: INutrient, from: Serving, to: Serving): INutrient {
+function changeServing(nutrient: INutrient, from: IServing, to: IServing): INutrient {
     return { type: nutrient.type, grams: nutrient.grams * to.grams / from.grams };
 }
 
@@ -49,7 +42,7 @@ export class Ingredient implements INutrition {
     }
 
     amount: number;
-    unit: Serving;
+    unit: IServing;
     food: IFood;
     get name(): string {
         return this.food.name;
@@ -70,7 +63,7 @@ export class Ingredient implements INutrition {
 function sumUpNutritions(nutritions: INutrition[]): INutrition {
     const result: { [id: number]: number } = {};
     const name = 'Sum of nutritions';
-    const unit = new Serving("Serving", 0);
+    const unit: IServing = { name: "Serving", grams: 0 };
 
     for (let nutrition of nutritions) {
         unit.grams += nutrition.unit && nutrition.unit.grams || 0;
@@ -99,8 +92,8 @@ export class Food implements IFood {
     }
 
     name: string;
-    unit: Serving;
-    servings: Serving[] = [];
+    unit: IServing;
+    servings: IServing[] = [];
     nutrients: INutrient[] = [];
 }
 
@@ -117,8 +110,8 @@ export class Recipe implements IFood {
 
     name: string;
     notes: string;
-    unit: Serving;
-    servings: Serving[] = [];
+    unit: IServing;
+    servings: IServing[] = [];
     ingredients: Ingredient[] = [];
     get nutrients(): INutrient[] {
         const nutrition = sumUpNutritions(this.ingredients);
@@ -130,7 +123,7 @@ export class Meal implements INutrition {
     name: string;
     time: Date;
     foods: Ingredient[] = [];
-    get unit(): Serving {
+    get unit(): IServing {
         return sumUpNutritions(this.foods).unit;
     }
     get nutrients(): INutrient[] {
@@ -141,7 +134,7 @@ export class Meal implements INutrition {
 export class DayMealPlan implements INutrition {
     name: string;
     meals: Meal[] = [];
-    get unit(): Serving {
+    get unit(): IServing {
         return sumUpNutritions(this.meals).unit;
     }
     get nutrients(): INutrient[] {
