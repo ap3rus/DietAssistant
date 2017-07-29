@@ -15,7 +15,6 @@ export default class RecipeEditor extends React.Component<RecipeEditorProps, {}>
         super();
         this.handleChangeUnit = this.handleChangeUnit.bind(this);
         this.handleChangeServings = this.handleChangeServings.bind(this);
-        this.handleCreateServing = this.handleCreateServing.bind(this);
         this.handleChangeIngredients = this.handleChangeIngredients.bind(this);
         this.handleChangeName = this.handleChangeName.bind(this);
     }
@@ -28,13 +27,8 @@ export default class RecipeEditor extends React.Component<RecipeEditorProps, {}>
 
     handleChangeServings(servings: IServing[]) {
         const nextRecipe = new Recipe({ ...this.props.recipe, servings });
-        this.props.onChange(nextRecipe);
-    }
-
-    handleCreateServing(serving: IServing) {
-        const nextRecipe = new Recipe({ ...this.props.recipe, servings: [...this.props.recipe.servings, serving] });
-        if (!nextRecipe.unit) {
-            nextRecipe.unit = serving;
+        if (!nextRecipe.unit && servings.length > 0) {
+            nextRecipe.unit = servings[0];
         }
         this.props.onChange(nextRecipe);
     }
@@ -62,7 +56,7 @@ export default class RecipeEditor extends React.Component<RecipeEditorProps, {}>
                 </div>
                 <div className="form-group">
                     <label>Servings</label>
-                    <ServingsGrid onChange={this.handleChangeServings} servings={this.props.recipe.servings} onCreate={this.handleCreateServing} />
+                    <ServingsGrid onChange={this.handleChangeServings} servings={this.props.recipe.servings} />
                 </div>
                 <div className="form-group">
                     <label>Ingredients</label>

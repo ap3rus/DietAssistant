@@ -1,37 +1,53 @@
 ﻿import * as React from 'react';
 import { IServing } from '../contracts';
-import SimpleGrid from './simpleGrid';
+import EasyGrid, { createRowRemovalField, createEditableField, createRowCreationFooter } from './easyGrid';
+
+class EasyGridWrapper extends EasyGrid<IServing> { }
 
 interface ServingsGridProps
 {
     servings: IServing[];
     onChange: (this: void, servings: IServing[]) => void;
-    onCreate: (this: void, serving: IServing) => void;
 }
 
 export default class ServingsGrid extends React.Component<ServingsGridProps, {}> {
     constructor() {
         super();
         this.handleCreate = this.handleCreate.bind(this);
-        this.handleChange = this.handleChange.bind(this);
+        this.handleRemove = this.handleRemove.bind(this);
+        this.handleUpdate = this.handleUpdate.bind(this);
     }
 
     private handleCreate() {
-        this.props.onCreate({ name: 'Serving', grams: 100 });
+        const nextServings = [...this.props.servings, { name: 'Serving', grams: 100 }];
+        this.props.onChange(nextServings);
     }
 
-    private handleChange({ data }: { data: IServing[] }) {
-        this.props.onChange(data);
+    private handleRemove(serving: IServing, index: number) {
+        const nextServings = [...this.props.servings];
+        nextServings.splice(index, 1);
+        this.props.onChange(nextServings);
+    }
+
+    private handleUpdate(serving: IServing, index: number) {
+        const nextServings = [...this.props.servings];
+        nextServings[index] = serving;
+        this.props.onChange(nextServings);
     }
 
     public render() {
-        const fields = { name: 'Serving name', grams: 'Weight, grams' };
         const data = this.props.servings;
 
+        const fields = [
+            createEditableField('Serving name', row => row.name, (row, name) => ({ ...row, name }), this.handleUpdate, createRowCreationFooter(this.handleCreate)),
+            createEditableField('Weight, grams', row => row.grams, (row, grams) => ({ ...row, grams }), this.handleUpdate),
+            createRowRemovalField(this.handleRemove)
+        ];
+
         return (
-            <SimpleGrid
-                fields={fields} data={data} onChange={this.handleChange} onCreate={this.handleCreate}
-            />
+            <div>
+                <EasyGridWrapper fields={fields} data={data} showFooter={true} />
+            </div>
         );
     }
 }
