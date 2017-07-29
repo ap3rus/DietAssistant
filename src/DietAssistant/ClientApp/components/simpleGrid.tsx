@@ -1,7 +1,9 @@
 ﻿import * as React from 'react';
 import * as _ from 'lodash';
 
-type FieldValuesType = { [id: number]: string } | ((this: void, row: any) => { [id: number]: string });
+type FieldValuesType =
+    { [id: number]: string } |
+    ((this: void, row: any) => { [id: number]: string });
 
 interface FieldDefinition {
     name: string;
@@ -33,11 +35,11 @@ export default class SimpleGrid extends React.Component<SimpleGridProps, {}> {
         super();
     }
 
-    private handleRowFieldChange(rowIndex: number, propertyName: string, value: any, field: FieldType) {
+    private handleRowFieldChange(rowIndex: number, fieldId: string, value: any, field: FieldType) {
         const nextRow = this.props.cloneRow ? this.props.cloneRow(this.props.data[rowIndex]) : { ...this.props.data[rowIndex] };
         const fieldUpdater = typeof (field) !== 'string' && field.updater ? field.updater : _.set;
 
-        fieldUpdater(nextRow, propertyName, value);
+        fieldUpdater(nextRow, fieldId, value);
 
         const nextData = [...this.props.data];
         nextData[rowIndex] = nextRow;
@@ -53,14 +55,17 @@ export default class SimpleGrid extends React.Component<SimpleGridProps, {}> {
         this.props.onChange({ data: nextData, removed });
     }
 
-    private renderField(rowIndex: number, propertyName: string, value: any, field: FieldType) {
+    private renderField(rowIndex: number, row: any, fieldId: string) {
+        const field: FieldType = this.props.fields[fieldId];
+        const value: any = _.get(row, fieldId);
+
         if (this.props.isReadOnly || typeof (field) !== 'string' && field.isReadOnly) {
             return value;
         } else if (typeof (field) !== 'string' && field.values) {
             const values = typeof (field.values) === 'function' ? field.values(this.props.data[rowIndex]) : field.values;
 
             return (
-                <select className="form-control" value={value} onChange={(e) => this.handleRowFieldChange(rowIndex, propertyName, e.target.value, field)}>
+                <select className="form-control" value={value} onChange={(e) => this.handleRowFieldChange(rowIndex, fieldId, e.target.value, field)}>
                     {_.map(values, (name, value) => (
                         <option key={value} value={value}>{name}</option>
                     ))}
@@ -68,13 +73,13 @@ export default class SimpleGrid extends React.Component<SimpleGridProps, {}> {
             );
         } else {
             return (
-                <input className="form-control" value={value} onChange={(e) => this.handleRowFieldChange(rowIndex, propertyName, e.target.value, field)} />
+                <input className="form-control" value={value} onChange={(e) => this.handleRowFieldChange(rowIndex, fieldId, e.target.value, field)} />
             );
         }
     }
 
-    private getFieldName(propertyName) {
-        const field = this.props.fields[propertyName];
+    private getFieldName(fieldId) {
+        const field = this.props.fields[fieldId];
         if (typeof (field) === 'string') {
             return field;
         } else {
@@ -83,15 +88,15 @@ export default class SimpleGrid extends React.Component<SimpleGridProps, {}> {
     }
 
     public render() {
-        const propertyNames = _.keys(this.props.fields);
+        const fieldIds = _.keys(this.props.fields);
 
         return (
             <div className="table-responsive">
                 <table className="table table-condensed">
                     <thead>
                         <tr>
-                            {_.map(propertyNames, (propertyName, i) => (
-                                <th key={i}>{this.getFieldName(propertyName)}</th>
+                            {_.map(fieldIds, (fieldId, i) => (
+                                <th key={i}>{this.getFieldName(fieldId)}</th>
                             ))}
                             {this.props.canRemove !== false && (
                                 <th key="remove"></th>
@@ -101,9 +106,9 @@ export default class SimpleGrid extends React.Component<SimpleGridProps, {}> {
                     <tbody>
                         {_.map(this.props.data, (row, i) => (
                             <tr key={i}>
-                                {_.map(propertyNames, (propertyName, j) => (
+                                {_.map(fieldIds, (fieldId, j) => (
                                     <td key={j}>
-                                        {this.renderField(i, propertyName, _.get(row, propertyName) as string, this.props.fields[propertyName])}
+                                        {this.renderField(i, row, fieldId)}
                                     </td>
                                 ))}
                                 {this.props.canRemove !== false && (
@@ -117,7 +122,7 @@ export default class SimpleGrid extends React.Component<SimpleGridProps, {}> {
                     {this.props.canCreate !== false && (
                         <tfoot>
                             <tr>
-                                <td colSpan={propertyNames.length + 1}>
+                                <td colSpan={fieldIds.length + 1}>
                                     <a href="javascript:void(0)" onClick={this.props.onCreate}>Add</a>
                                 </td>
                             </tr>
