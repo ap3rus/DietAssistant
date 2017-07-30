@@ -80,12 +80,37 @@ export function createRowRemovalField<T>(onRemove: (this: void, row: T, index: n
     };
 }
 
+export function createDropdownField<T>(
+    header: React.ReactNode,
+    options: Array<{ value: any, content: React.ReactNode }>,
+    getValue: (this: void, row: T) => any,
+    setValue: (this: void, row: T, value: any) => T,
+    handleUpdate: (this: void, row: T, index: number) => void,
+    footer?: React.ReactNode) {
+
+    return {
+        header,
+        content: (row, index) => dropdown(getValue(row), options, (value) => handleUpdate(setValue(row, value), index)),
+        footer
+    };
+}
+
 export function createRowCreationFooter(onCreate: (this: void) => void) {
     return <a href="javascript:void(0)" onClick={onCreate}>Add</a>;
 }
 
 export function editable(value: any, onChange: (this: void, value: any) => void) {
     return <input className="form-control" value={value} onChange={(e) => { onChange(e.target.value); }} />
+}
+
+export function dropdown(value: any, options: Array<{ value: any, content: React.ReactNode }>, onChange: (this: void, value: any) => void) {
+    return (
+        <select value={value} onChange={(e) => onChange(e.target.value)}>
+            {_.map(options, (option: { value: any, content: React.ReactNode }) => (
+                <option value={option.value}>{option.content}</option>
+            ))}
+        </select>
+    );
 }
 
 class PersonGrid extends EasyGrid<{ name: string, surname: string, children: { age: number, weight: number, name: string }[], favoriteKid: string}> { }

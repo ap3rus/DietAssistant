@@ -53,29 +53,6 @@ export function getIngredientWeight(ingredient: IIngredient) {
     return weight;
 }
 
-export class Ingredient implements INutrition, IIngredient {
-    constructor(ingredient?: Partial<IIngredient>) {
-        if (ingredient) {
-            this.amount = ingredient.amount;
-            this.food = ingredient.food;
-            this.unit = ingredient.unit || this.food && this.food.unit;
-        }
-    }
-
-    amount: number;
-    unit: IServing;
-    food: IFood;
-    get name(): string {
-        return this.food.name;
-    }
-    get nutrients(): INutrient[] {
-        return getIngredientNutrition(this).nutrients;
-    }
-    get weight(): number {
-        return getIngredientWeight(this);
-    }
-}
-
 function composeNutritions(nutritions: INutrition[]): INutrition {
     const result: { [id: number]: number } = {};
     const name = 'Sum of nutritions';
@@ -151,11 +128,11 @@ export class Recipe implements IFood, IRecipe {
 export interface IMeal {
     name: string;
     time: Date;
-    foods: Ingredient[];
+    foods: IIngredient[];
 }
 
 function getMealNutrition(meal: IMeal): INutrition {
-    return composeNutritions(meal.foods);
+    return composeNutritions(_.map(meal.foods, ingredient => getIngredientNutrition(ingredient)));
 }
 
 function getMealPlanNutrition(plan: IDayMealPlan): INutrition {
@@ -166,12 +143,12 @@ function getMealPlanNutrition(plan: IDayMealPlan): INutrition {
 export class Meal implements INutrition, IMeal {
     name: string;
     time: Date;
-    foods: Ingredient[] = [];
+    foods: IIngredient[] = [];
     get unit(): IServing {
-        return composeNutritions(this.foods).unit;
+        return getMealNutrition(this).unit;
     }
     get nutrients(): INutrient[] {
-        return composeNutritions(this.foods).nutrients;
+        return getMealNutrition(this).nutrients;
     }
 }
 
