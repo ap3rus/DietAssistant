@@ -2,13 +2,13 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import ServingsGrid from './ServingsGrid';
 import NutrientsGrid from './NutrientsGrid';
-import { Recipe, Food, IServing, INutrient, NutrientType, IIngredient } from '../contracts';
+import { Recipe, IFood, IServing, INutrient, NutrientType, IIngredient } from '../contracts';
 import FoodEditor from './foods/FoodEditor';
 import IngredientsGrid from './IngredientsGrid';
 import RecipeEditor from './recipes/RecipeEditor';
 
 interface HomeState {
-    food: Food;
+    food: IFood;
     recipe: Recipe;
 }
 
@@ -18,7 +18,7 @@ export default class Home extends React.Component<RouteComponentProps<{}>, HomeS
         this.handleChangeRecipe = this.handleChangeRecipe.bind(this);
         this.handleChangeFood = this.handleChangeFood.bind(this);
 
-        const food = new Food();
+        const food = { name: '', unit: null, servings: [], nutrients: [] };
         const ingredients: IIngredient[] = [{ amount: 5, unit: food.unit, food: food }];
         const recipe = new Recipe({ ingredients });
         this.state = { food, recipe };

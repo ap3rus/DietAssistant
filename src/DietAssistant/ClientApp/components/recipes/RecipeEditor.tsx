@@ -1,6 +1,6 @@
 ﻿import * as React from 'react';
 import * as _ from 'lodash';
-import { Recipe, Food, IServing, INutrient, NutrientType, IIngredient } from '../../contracts';
+import { Recipe, IFood, IServing, INutrient, NutrientType, IIngredient } from '../../contracts';
 import ServingsGrid from '../ServingsGrid';
 import NutrientsGrid from '../NutrientsGrid';
 import IngredientsGrid from '../IngredientsGrid';

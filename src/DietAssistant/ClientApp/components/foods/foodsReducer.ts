@@ -1,9 +1,9 @@
 ﻿import { Reducer } from 'redux';
-import { Food } from '../../contracts';
+import { IFood } from '../../contracts';
 import { KnownAction, SET_FOODS } from './foodsActions';
 
 export interface FoodsState {
-    foods: Food[]
+    foods: IFood[]
 }
 
 const defaultState: FoodsState = {

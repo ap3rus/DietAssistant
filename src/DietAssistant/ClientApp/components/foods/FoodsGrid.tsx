@@ -1,13 +1,13 @@
 ﻿import * as React from 'react';
 import * as _ from 'lodash';
-import { Food } from '../../contracts';
+import { IFood } from '../../contracts';
 import SimpleGrid from '../simpleGrid';
 
 interface FoodsGridProps {
-    foods: Food[],
-    onChange?: (this: void, foods: Food[]) => void;
-    onUpdate?: (this: void, food: Food) => void;
-    onRemove?: (this: void, food: Food) => void;
+    foods: IFood[],
+    onChange?: (this: void, foods: IFood[]) => void;
+    onUpdate?: (this: void, food: IFood) => void;
+    onRemove?: (this: void, food: IFood) => void;
     onCreate?: (this: void) => void;
 }
 
@@ -17,7 +17,7 @@ export default class FoodsGrid extends React.Component<FoodsGridProps, {}> {
         this.handleChange = this.handleChange.bind(this);
     }
 
-    private handleChange({ data, removed, updated }: { data: Food[], removed: Food, updated: Food }) {
+    private handleChange({ data, removed, updated }: { data: IFood[], removed: IFood, updated: IFood }) {
         this.props.onChange(data);
         if (removed) {
             this.props.onRemove(removed);

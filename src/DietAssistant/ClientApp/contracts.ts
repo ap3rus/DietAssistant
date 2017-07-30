@@ -74,22 +74,6 @@ function composeNutritions(nutritions: INutrition[]): INutrition {
     return { name, unit, nutrients };
 }
 
-export class Food implements IFood {
-    constructor(food?: Partial<IFood>) {
-        if (food) {
-            this.name = food.name;
-            this.unit = food.unit;
-            this.servings = food.servings || [];
-            this.nutrients = food.nutrients || [];
-        }
-    }
-
-    name: string;
-    unit: IServing;
-    servings: IServing[] = [];
-    nutrients: INutrient[] = [];
-}
-
 export interface IRecipe {
     name: string;
     notes: string;
@@ -140,36 +124,13 @@ function getMealPlanNutrition(plan: IDayMealPlan): INutrition {
     return composeNutritions(mealsNutritions);
 }
 
-export class Meal implements INutrition, IMeal {
-    name: string;
-    time: Date;
-    foods: IIngredient[] = [];
-    get unit(): IServing {
-        return getMealNutrition(this).unit;
-    }
-    get nutrients(): INutrient[] {
-        return getMealNutrition(this).nutrients;
-    }
-}
-
 export interface IDayMealPlan {
     name: string;
     meals: IMeal[];
 }
 
-export class DayMealPlan implements INutrition, IDayMealPlan {
-    name: string;
-    meals: IMeal[] = [];
-    get unit(): IServing {
-        return getMealPlanNutrition(this).unit;
-    }
-    get nutrients(): INutrient[] {
-        return getMealPlanNutrition(this).nutrients;
-    }
-}
-
 export interface IDayMealLog {
     date: Date;
     meals: IMeal[];
-    plan: DayMealPlan;
+    plan: IDayMealPlan;
 }

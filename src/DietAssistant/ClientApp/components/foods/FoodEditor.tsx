@@ -1,12 +1,12 @@
 ﻿import * as React from 'react';
 import * as _ from 'lodash';
-import { Food, IServing, INutrient, NutrientType } from '../../contracts';
+import { IFood, IServing, INutrient, NutrientType } from '../../contracts';
 import ServingsGrid from '../ServingsGrid';
 import NutrientsGrid from '../NutrientsGrid';
 
 interface FoodEditorProps {
-    food: Food;
-    onChangeFood: (this: void, food: Food) => void;
+    food: IFood;
+    onChangeFood: (this: void, food: IFood) => void;
 }
 
 export default class FoodEditor extends React.Component<FoodEditorProps, {}> {
@@ -21,12 +21,12 @@ export default class FoodEditor extends React.Component<FoodEditorProps, {}> {
 
     private handleChangeUnit(e) {
         const nextUnit = this.props.food.servings[e.target.selectedIndex];
-        const nextFood = new Food({ ...this.props.food, unit: nextUnit });
+        const nextFood = { ...this.props.food, unit: nextUnit };
         this.props.onChangeFood(nextFood);
     }
 
     handleChangeServings(servings: IServing[]) {
-        const nextFood = new Food({ ...this.props.food, servings });
+        const nextFood = { ...this.props.food, servings };
         if (!nextFood.unit && servings.length > 0) {
             nextFood.unit = servings[0];
         }
@@ -34,17 +34,17 @@ export default class FoodEditor extends React.Component<FoodEditorProps, {}> {
     }
 
     handleChangeNutrients(nutrients: INutrient[]) {
-        const nextFood = new Food({ ...this.props.food, nutrients });
+        const nextFood = { ...this.props.food, nutrients };
         this.props.onChangeFood(nextFood);
     }
 
     handleCreateNutrient(nutrient: INutrient) {
-        const nextFood = new Food({ ...this.props.food, nutrients: [...this.props.food.nutrients, nutrient] });
+        const nextFood = { ...this.props.food, nutrients: [...this.props.food.nutrients, nutrient] };
         this.props.onChangeFood(nextFood);
     }
 
     handleChangeName(e) {
-        const nextFood = new Food({ ...this.props.food, name: e.target.value });
+        const nextFood = { ...this.props.food, name: e.target.value };
         this.props.onChangeFood(nextFood);
     }
 
