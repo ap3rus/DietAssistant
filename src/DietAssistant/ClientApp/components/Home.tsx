@@ -1,15 +1,16 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import { RouteComponentProps } from 'react-router-dom';
 import ServingsGrid from './ServingsGrid';
 import NutrientsGrid from './NutrientsGrid';
-import { Recipe, IFood, IServing, INutrient, NutrientType, IIngredient } from '../contracts';
+import { IRecipe, IFood, IServing, INutrient, NutrientType, IIngredient } from '../contracts';
 import FoodEditor from './foods/FoodEditor';
 import IngredientsGrid from './IngredientsGrid';
 import RecipeEditor from './recipes/RecipeEditor';
 
 interface HomeState {
     food: IFood;
-    recipe: Recipe;
+    recipe: IRecipe;
 }
 
 export default class Home extends React.Component<RouteComponentProps<{}>, HomeState> {
@@ -20,16 +21,19 @@ export default class Home extends React.Component<RouteComponentProps<{}>, HomeS
 
         const food = { name: '', unit: null, servings: [], nutrients: [] };
         const ingredients: IIngredient[] = [{ amount: 5, unit: food.unit, food: food }];
-        const recipe = new Recipe({ ingredients });
+        const recipe: IRecipe = { name: '', notes: '', ingredients, unit: null, servings: [] };
         this.state = { food, recipe };
     }
 
     handleChangeFood(nextFood) {
         const nextIngredient = { ...this.state.recipe.ingredients[0], food: nextFood };
-        this.setState({ food: nextFood, recipe: new Recipe({ ...this.state.recipe, ingredients: [nextIngredient]}) });
+        if (!nextIngredient.unit || !_.some(nextFood.servings, (serving: IServing) => serving.grams === nextIngredient.unit.grams)) {
+            nextIngredient.unit = nextFood.unit;
+        }
+        this.setState({ food: nextFood, recipe: { ...this.state.recipe, ingredients: [nextIngredient]} });
     }
 
-    handleChangeRecipe(recipe: Recipe) {
+    handleChangeRecipe(recipe: IRecipe) {
         this.setState({ recipe });
     }
 

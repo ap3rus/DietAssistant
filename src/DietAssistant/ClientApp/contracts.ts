@@ -82,31 +82,10 @@ export interface IRecipe {
     ingredients: IIngredient[];
 }
 
-function getRecipeNutrition(recipe: IRecipe): INutrition {
+export function getRecipeNutrition(recipe: IRecipe): INutrition {
     const nutrition = composeNutritions(_.map(recipe.ingredients, ingredient => getIngredientNutrition(ingredient)));
     const nutrients = _.map(nutrition.nutrients, nutrient => changeServing(nutrient, nutrition.unit, recipe.unit));
     return { name: recipe.name, unit: recipe.unit, nutrients };
-}
-
-export class Recipe implements IFood, IRecipe {
-    constructor(recipe?: Partial<IRecipe>) {
-        if (recipe) {
-            this.name = recipe.name;
-            this.notes = recipe.notes;
-            this.unit = recipe.unit;
-            this.servings = recipe.servings || [];
-            this.ingredients = recipe.ingredients || [];
-        }
-    }
-
-    name: string;
-    notes: string;
-    unit: IServing;
-    servings: IServing[] = [];
-    ingredients: IIngredient[] = [];
-    get nutrients(): INutrient[] {
-        return getRecipeNutrition(this).nutrients;
-    }
 }
 
 export interface IMeal {
