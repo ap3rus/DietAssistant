@@ -82,7 +82,7 @@ export function createRowRemovalField<T>(onRemove: (this: void, row: T, index: n
 
 export function createDropdownField<T>(
     header: React.ReactNode,
-    options: Array<{ value: any, content: React.ReactNode }>,
+    options: Array<{ value: any, content: React.ReactNode }> | ((this: void, row: T) => Array<{ value: any, content: React.ReactNode }>),
     getValue: (this: void, row: T) => any,
     setValue: (this: void, row: T, value: any) => T,
     handleUpdate: (this: void, row: T, index: number) => void,
@@ -90,7 +90,7 @@ export function createDropdownField<T>(
 
     return {
         header,
-        content: (row, index) => dropdown(getValue(row), options, (value) => handleUpdate(setValue(row, value), index)),
+        content: (row, index) => dropdown(getValue(row), _.isFunction(options) ? options(row) : options, (value) => handleUpdate(setValue(row, value), index)),
         footer
     };
 }
