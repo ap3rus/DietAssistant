@@ -1,8 +1,10 @@
 ﻿import * as React from 'react';
-import { INutrient, NutrientType } from '../contracts';
-import * as enumHelpers from '../enumHelpers';
-import SimpleGrid from './simpleGrid';
 import * as _ from 'lodash';
+import * as enumHelpers from '../enumHelpers';
+import { INutrient, NutrientType } from '../contracts';
+import EasyGrid, { createRowRemovalField, createEditableField, createRowCreationFooter, createDropdownField } from './easyGrid';
+
+class EasyGridWrapper extends EasyGrid<INutrient> { }
 
 interface NutrientsGridProps
 {
@@ -21,24 +23,8 @@ export default class NutrientsGrid extends React.Component<NutrientsGridProps, {
     constructor() {
         super();
         this.handleCreate = this.handleCreate.bind(this);
-        this.handleChange = this.handleChange.bind(this);
-    }
-
-    private handleCreate() {
-        this.props.onCreate({ type: this.getNextAvailableNutrientType(), grams: 0 });
-    }
-
-    private handleChange({ data }: { data: INutrient[] }) {        
-        const checkNutrients = _.reduce(data, (result, nutrient) => {
-            if (result && !result[nutrient.type]) {
-                result[nutrient.type] = true;
-                return result;
-            }
-        }, {});
-
-        if (checkNutrients) {
-            this.props.onChange(data);
-        }
+        this.handleRemove = this.handleRemove.bind(this);
+        this.handleUpdate = this.handleUpdate.bind(this);
     }
 
     private getNextAvailableNutrientType(): NutrientType {
@@ -47,25 +33,49 @@ export default class NutrientsGrid extends React.Component<NutrientsGridProps, {
         return _.find(enumHelpers.getValues(NutrientType), type => !existingNutrientsByType[type]);
     }
 
+    private handleCreate() {
+        const nextNutrients = [...this.props.nutrients, { type: this.getNextAvailableNutrientType(), grams: 0 }];
+        this.props.onChange(nextNutrients);
+    }
+
+    private handleRemove(nutrient: INutrient, index: number) {
+        const nextNutrients = [...this.props.nutrients];
+        nextNutrients.splice(index, 1);
+        this.props.onChange(nextNutrients);
+    }
+
+    private handleUpdate(nutrient: INutrient, index: number) {
+        if (_.some(this.props.nutrients, (n: INutrient, i: number) => index !== i && n.type == nutrient.type)) {
+            return;
+        }
+
+        const nextNutrients = [...this.props.nutrients];
+        nextNutrients[index] = nutrient;
+        this.props.onChange(nextNutrients);
+    }
+
     public render() {
-        const fields = {
-            type: {
-                name: 'Nutrient',
-                values: enumHelpers.keyByValues(NutrientType)
-            },
-            grams: 'Amount, grams'
-        };
         const data = this.props.nutrients;
+        const fields = this.props.isReadOnly ?
+            [
+                { header: 'Nutrient', content: (row) => row.type },
+                { header: 'Amount, grams', content: (row) => row.grams }
+            ] :
+            [
+                createDropdownField(
+                    'Nutrient',
+                    _.map(enumHelpers.getValues(NutrientType), (value: NutrientType) => ({ value, content: NutrientType[value] })),
+                    row => row.type,
+                    (row, type) => ({ ...row, type }),
+                    this.handleUpdate,
+                    !_.isUndefined(this.getNextAvailableNutrientType()) && createRowCreationFooter(this.handleCreate)
+                ),
+                createEditableField('Amount, grams', row => row.grams, (row, grams) => ({ ...row, grams }), this.handleUpdate),
+                createRowRemovalField(this.handleRemove)
+            ];
 
         return (
-            <SimpleGrid
-                fields={fields}
-                data={data}
-                onChange={this.handleChange}
-                onCreate={this.handleCreate}
-                canCreate={!this.props.isReadOnly && this.getNextAvailableNutrientType() !== undefined}
-                isReadOnly={this.props.isReadOnly}
-            />
+            <EasyGridWrapper fields={fields} data={data} showFooter={!this.props.isReadOnly} />
         );
     }
 }

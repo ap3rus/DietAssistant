@@ -45,9 +45,7 @@ export default class ServingsGrid extends React.Component<ServingsGridProps, {}>
         ];
 
         return (
-            <div>
-                <EasyGridWrapper fields={fields} data={data} showFooter={true} />
-            </div>
+            <EasyGridWrapper fields={fields} data={data} showFooter={true} />
         );
     }
 }

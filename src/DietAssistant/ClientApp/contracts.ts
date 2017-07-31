@@ -40,7 +40,9 @@ export interface IIngredient {
 }
 
 export function getIngredientNutrition(ingredient: IIngredient): INutrition {
-    const nutrients = ingredient.food.nutrients.map(nutrient => changeServing(nutrient, ingredient.food.unit, ingredient.unit));
+    const nutrients = ingredient.food.unit && ingredient.unit ?
+        ingredient.food.nutrients.map(nutrient => changeServing(nutrient, ingredient.food.unit, ingredient.unit)) :
+        ingredient.food.nutrients;
     return { name: ingredient.food.name, unit: ingredient.unit, nutrients };
 }
 
@@ -84,7 +86,9 @@ export interface IRecipe {
 
 export function getRecipeNutrition(recipe: IRecipe): INutrition {
     const nutrition = composeNutritions(_.map(recipe.ingredients, ingredient => getIngredientNutrition(ingredient)));
-    const nutrients = _.map(nutrition.nutrients, nutrient => changeServing(nutrient, nutrition.unit, recipe.unit));
+    const nutrients = nutrition.unit && recipe.unit ?
+        _.map(nutrition.nutrients, nutrient => changeServing(nutrient, nutrition.unit, recipe.unit)) :
+        nutrition.nutrients;
     return { name: recipe.name, unit: recipe.unit, nutrients };
 }
 
