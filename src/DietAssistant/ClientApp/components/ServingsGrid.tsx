@@ -1,6 +1,6 @@
 ﻿import * as React from 'react';
 import { IServing } from '../contracts';
-import EasyGrid, { createRowRemovalField, createEditableField, createRowCreationFooter } from './easyGrid';
+import EasyGrid, { createRowRemovalField, createEditableField, createRowCreationFooter } from './EasyGrid';
 
 class EasyGridWrapper extends EasyGrid<IServing> { }
 

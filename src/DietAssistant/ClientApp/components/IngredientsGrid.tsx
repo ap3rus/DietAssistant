@@ -1,10 +1,9 @@
 ﻿import * as React from 'react';
 import * as _ from 'lodash';
 import { IIngredient, IServing, getIngredientWeight, getIngredientNutrition } from '../contracts';
-import EasyGrid, { createRowRemovalField, createEditableField, createRowCreationFooter, createDropdownField } from './easyGrid';
+import EasyGrid, { createRowRemovalField, createEditableField, createRowCreationFooter, createDropdownField } from './EasyGrid';
 
 class EasyGridWrapper extends EasyGrid<IIngredient> { }
-
 
 interface IngredientsGridProps {
     ingredients: IIngredient[];
@@ -55,11 +54,12 @@ export default class IngredientsGrid extends React.Component<IngredientsGridProp
                 this.handleUpdate
             ),
             { header: 'Weight, grams', content: (row: IIngredient) => getIngredientWeight(row) },
+            createRowRemovalField(this.handleRemove)
         ];
         const data = this.props.ingredients;
 
         return (
-            <EasyGridWrapper fields={fields} data={data} />
+            <EasyGridWrapper fields={fields} data={data} showFooter />
         );
     }
 }

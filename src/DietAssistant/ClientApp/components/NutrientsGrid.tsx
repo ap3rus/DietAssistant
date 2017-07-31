@@ -2,7 +2,7 @@
 import * as _ from 'lodash';
 import * as enumHelpers from '../enumHelpers';
 import { INutrient, NutrientType } from '../contracts';
-import EasyGrid, { createRowRemovalField, createEditableField, createRowCreationFooter, createDropdownField } from './easyGrid';
+import EasyGrid, { createRowRemovalField, createEditableField, createRowCreationFooter, createDropdownField } from './EasyGrid';
 
 class EasyGridWrapper extends EasyGrid<INutrient> { }
 

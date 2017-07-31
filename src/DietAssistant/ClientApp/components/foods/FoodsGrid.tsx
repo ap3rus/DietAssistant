@@ -1,7 +1,9 @@
 ﻿import * as React from 'react';
 import * as _ from 'lodash';
 import { IFood } from '../../contracts';
-import SimpleGrid from '../simpleGrid';
+import EasyGrid, { createRowRemovalField, createRowCreationFooter } from '../EasyGrid';
+
+class EasyGridWrapper extends EasyGrid<IFood> { }
 
 interface FoodsGridProps {
     foods: IFood[],
@@ -12,33 +14,47 @@ interface FoodsGridProps {
 }
 
 export default class FoodsGrid extends React.Component<FoodsGridProps, {}> {
+    static defaultProps: Partial<FoodsGridProps> = {
+        onChange: () => { },
+        onUpdate: () => { },
+        onRemove: () => { },
+        onCreate: () => { }
+    };
+
     constructor() {
         super();
-        this.handleChange = this.handleChange.bind(this);
+        this.handleCreate = this.handleCreate.bind(this);
+        this.handleUpdate = this.handleUpdate.bind(this);
+        this.handleRemove = this.handleRemove.bind(this);
     }
 
-    private handleChange({ data, removed, updated }: { data: IFood[], removed: IFood, updated: IFood }) {
-        this.props.onChange(data);
-        if (removed) {
-            this.props.onRemove(removed);
-        }
+    private handleCreate() {
+        this.props.onCreate();
+    }
 
-        if (updated) {
-            this.props.onUpdate(updated);
-        }
+    private handleRemove(food: IFood, index: number) {
+        const nextFoods = [...this.props.foods];
+        nextFoods.splice(index, 1);
+        this.props.onChange(nextFoods);
+        this.props.onRemove(food);
+    }
+
+    private handleUpdate(food: IFood, index: number) {
+        const nextFoods = [...this.props.foods];
+        nextFoods[index] = food;
+        this.props.onChange(nextFoods);
+        this.props.onUpdate(food);
     }
 
     public render() {
-        const fields = {
-            name: {
-                name: 'Name',
-                isReadOnly: true
-            }
-        };
         const data = this.props.foods;
+        const fields = [
+            { header: 'Name', content: (row) => row.name, footer: createRowCreationFooter(this.handleCreate) },
+            createRowRemovalField(this.handleRemove)
+        ];
 
         return (
-            <SimpleGrid fields={fields} data={data} onChange={this.handleChange} onCreate={this.props.onCreate} />
+            <EasyGridWrapper fields={fields} data={data} showFooter />
         );
     };
 }
