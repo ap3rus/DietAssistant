@@ -1,13 +1,17 @@
 ﻿import * as _ from 'lodash';
 // todo get rid of classes
 
+export interface IIdentifiable {
+    id?: string;
+}
+
 export interface INutrition {
     name: string;
     unit: IServing;
     nutrients: INutrient[];
 }
 
-export interface IFood extends INutrition {
+export interface IFood extends INutrition, IIdentifiable {
     servings: IServing[];
 }
 
@@ -76,7 +80,7 @@ function composeNutritions(nutritions: INutrition[]): INutrition {
     return { name, unit, nutrients };
 }
 
-export interface IRecipe {
+export interface IRecipe extends IIdentifiable {
     name: string;
     notes: string;
     unit: IServing;

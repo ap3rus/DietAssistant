@@ -1,20 +1,25 @@
 ﻿import { Reducer } from 'redux';
 import { IFood } from '../../contracts';
-import { KnownAction, SET_FOODS } from './foodsActions';
+import { KnownAction, SET_FOODS, SET_SELECTED_FOOD } from './foodsActions';
 
 export interface FoodsState {
-    foods: IFood[]
+    foods: IFood[];
+    selectedFood?: IFood;
 }
 
 const defaultState: FoodsState = {
-    foods: []
+    foods: [],
+    selectedFood: null
 };
 
 export const foodsReducer: Reducer<FoodsState> = (state: FoodsState = defaultState, action: KnownAction) => {
     switch (action.type) {
         case SET_FOODS:
-            const nextState = { foods: action.foods };
-            return nextState;
+            return { ...state, foods: action.foods };
+
+        case SET_SELECTED_FOOD: {
+            return { ...state, selectedFood: action.food };
+        }
         default:
             return state;
     }
