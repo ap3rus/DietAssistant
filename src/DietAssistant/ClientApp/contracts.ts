@@ -89,7 +89,7 @@ export interface IRecipe extends IIdentifiable {
 }
 
 export function getRecipeNutrition(recipe: IRecipe): INutrition {
-    const nutrition = composeNutritions(_.map(recipe.ingredients, ingredient => getIngredientNutrition(ingredient)));
+    const nutrition = composeNutritions(_.filter(_.map(recipe.ingredients, ingredient => ingredient.food && getIngredientNutrition(ingredient))));
     const nutrients = nutrition.unit && recipe.unit ?
         _.map(nutrition.nutrients, nutrient => changeServing(nutrient, nutrition.unit, recipe.unit)) :
         nutrition.nutrients;
