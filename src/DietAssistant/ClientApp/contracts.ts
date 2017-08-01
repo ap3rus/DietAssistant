@@ -19,8 +19,8 @@ export enum NutrientType {
     Carbs,
     Fat,
     Protein,
-    Sugars,
-    Sodium
+    Sodium,
+    Sugars    
 }
 
 export interface INutrient {

@@ -10,6 +10,7 @@ interface FoodsGridProps {
     onChange?: (this: void, foods: IFood[]) => void;
     onUpdate?: (this: void, food: IFood) => void;
     onRemove?: (this: void, food: IFood) => void;
+    onSelect?: (this: void, food: IFood) => void;
     onCreate?: (this: void) => void;
 }
 
@@ -49,7 +50,7 @@ export default class FoodsGrid extends React.Component<FoodsGridProps, {}> {
     public render() {
         const data = this.props.foods;
         const fields = [
-            { header: 'Name', content: (row) => row.name, footer: createRowCreationFooter(this.handleCreate) },
+            { header: 'Name', content: (row) => <a href="javascript:void(0)" onClick={(e) => this.props.onSelect(row)}>{row.name || '(no name)'}</a>, footer: createRowCreationFooter(this.handleCreate) },
             createRowRemovalField(this.handleRemove)
         ];
 

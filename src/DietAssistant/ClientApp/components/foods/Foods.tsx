@@ -19,14 +19,19 @@ class Foods extends React.Component<FoodsProps, {}> {
         super();
 
         this.handleCreateFood = this.handleCreateFood.bind(this);
+        this.handleEditFood = this.handleEditFood.bind(this);
         this.handleRemoveFood = this.handleRemoveFood.bind(this);
     }
 
     handleCreateFood() {
         const food = { name: '', unit: null, servings: [], nutrients: [] };
         this.props.upsertFood(food);
-        const history: { push: (this: void, url: string) => any } = this.props.history;
-        history.push('/foods/edit');
+        this.props.history.push('/foods/edit');
+    }
+
+    handleEditFood(food: IFood) {
+        this.props.setSelectedFood(food);
+        this.props.history.push('/foods/edit');
     }
 
     handleRemoveFood(food: IFood) {
@@ -36,7 +41,7 @@ class Foods extends React.Component<FoodsProps, {}> {
     public render() {
         return (
             <div>
-                <FoodsGrid foods={this.props.foods} onCreate={this.handleCreateFood} onRemove={this.handleRemoveFood} />
+                <FoodsGrid foods={this.props.foods} onCreate={this.handleCreateFood} onRemove={this.handleRemoveFood} onSelect={this.handleEditFood} />
             </div>
         );
     }

@@ -1,7 +1,7 @@
 ﻿import * as React from 'react';
 import * as _ from 'lodash';
 
-interface FieldDefinition<T> {
+export interface FieldDefinition<T> {
     header?: React.ReactNode;
     content: (this: void, row: T, index: number) => React.ReactNode;
     footer?: React.ReactNode;

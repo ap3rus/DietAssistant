@@ -1,16 +1,21 @@
 ﻿import * as React from 'react';
 import { IServing } from '../contracts';
-import EasyGrid, { createRowRemovalField, createEditableField, createRowCreationFooter } from './EasyGrid';
+import EasyGrid, { FieldDefinition, createRowRemovalField, createEditableField, createRowCreationFooter } from './EasyGrid';
 
 class EasyGridWrapper extends EasyGrid<IServing> { }
 
 interface ServingsGridProps
 {
+    allowEmpty?: boolean;
     servings: IServing[];
     onChange: (this: void, servings: IServing[]) => void;
 }
 
 export default class ServingsGrid extends React.Component<ServingsGridProps, {}> {
+    static defaultProps: Partial<ServingsGridProps> = {
+        allowEmpty: false
+    };
+
     constructor() {
         super();
         this.handleCreate = this.handleCreate.bind(this);
@@ -35,14 +40,23 @@ export default class ServingsGrid extends React.Component<ServingsGridProps, {}>
         this.props.onChange(nextServings);
     }
 
+    public componentWillMount() {
+        if (!this.props.allowEmpty && this.props.servings.length == 0) {
+            this.handleCreate();
+        }
+    }
+
     public render() {
         const data = this.props.servings;
 
-        const fields = [
+        const fields: Array<FieldDefinition<IServing>> = [
             createEditableField('Serving name', row => row.name, (row, name) => ({ ...row, name }), this.handleUpdate, createRowCreationFooter(this.handleCreate)),
-            createEditableField('Weight, grams', row => row.grams, (row, grams) => ({ ...row, grams }), this.handleUpdate),
-            createRowRemovalField(this.handleRemove)
+            createEditableField('Weight, grams', row => row.grams, (row, grams) => ({ ...row, grams }), this.handleUpdate)
         ];
+
+        if (this.props.allowEmpty || data.length > 1) {
+            fields.push(createRowRemovalField(this.handleRemove));
+        }
 
         return (
             <EasyGridWrapper fields={fields} data={data} showFooter={true} />
