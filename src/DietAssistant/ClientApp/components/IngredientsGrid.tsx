@@ -53,8 +53,9 @@ class IngredientsGrid extends React.Component<IngredientsGridProps, {}> {
                     row.food.name :
                     dropdown(
                         null,
-                        [{ value: null, content: '(find food)' }, ..._.map(this.props.availableFoods, (food: IFood) => ({ value: food.id, content: food.name }))],
-                        (id) => this.handleUpdate({ ...row, food: _.find(this.props.availableFoods, food => food.id == id) }, index)),
+                        _.map(this.props.availableFoods, (food: IFood) => ({ value: food.id, content: food.name })),
+                        (id) => this.handleUpdate({ ...row, food: _.find(this.props.availableFoods, food => food.id == id) }, index),
+                        "(find food)"),
                 footer: createRowCreationFooter(this.handleCreate)
             },
             {
@@ -66,7 +67,8 @@ class IngredientsGrid extends React.Component<IngredientsGridProps, {}> {
                 content: (row, index) => row.food && row.food.servings.length && dropdown(
                     row.unit && row.unit.grams,
                     _.map(row.food.servings, (serving: IServing) => ({ value: serving.grams, content: serving.name })),
-                    (grams) => this.handleUpdate({ ...row, unit: _.find(row.food.servings, serving => serving.grams == grams) }, index))
+                    (grams) => this.handleUpdate({ ...row, unit: _.find(row.food.servings, serving => serving.grams == grams) }, index),
+                    "(choose serving)")
             },
             { header: 'Weight, grams', content: (row: IIngredient) => row.food && getIngredientWeight(row) },
             createRowRemovalField(this.handleRemove)

@@ -86,11 +86,12 @@ export function createDropdownField<T>(
     getValue: (this: void, row: T) => any,
     setValue: (this: void, row: T, value: any) => T,
     handleUpdate: (this: void, row: T, index: number) => void,
+    defaultContent: React.ReactNode,
     footer?: React.ReactNode) {
 
     return {
         header,
-        content: (row, index) => dropdown(getValue(row), _.isFunction(options) ? options(row) : options, (value) => handleUpdate(setValue(row, value), index)),
+        content: (row, index) => dropdown(getValue(row), _.isFunction(options) ? options(row) : options, (value) => handleUpdate(setValue(row, value), index), defaultContent),
         footer
     };
 }
@@ -103,12 +104,20 @@ export function editable(value: any, onChange: (this: void, value: any) => void)
     return <input className="form-control" value={value} onChange={(e) => { onChange(e.target.value); }} />
 }
 
-export function dropdown(value: any, options: Array<{ value: any, content: React.ReactNode }>, onChange: (this: void, value: any) => void) {
-    return (
-        <select value={value} onChange={(e) => onChange(e.target.value)}>
-            {_.map(options, (option: { value: any, content: React.ReactNode }) => (
-                <option value={option.value}>{option.content}</option>
-            ))}
-        </select>
+export function dropdown(value: any, options: Array<{ value: any, content: React.ReactNode }>, onChange: (this: void, value: any) => void, defaultContent: React.ReactNode) {
+    const d2 = (
+        <div className="dropdown">
+            <button className="btn btn-dropdown dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" role="button" aria-expanded="false">
+                {_.get(_.find(options, (option) => option.value == value), 'content', defaultContent)}
+                <span className="caret"></span>
+            </button>
+            <ul className="dropdown-menu" role="menu">
+                {_.map(options, (option: { value: any, content: React.ReactNode }) => (
+                    <li><a href="javascript:void(0)" onClick={onChange.bind(undefined, option.value)}>{option.content}</a></li>
+                ))}
+            </ul>
+        </div>
     );
+
+    return d2;
 }

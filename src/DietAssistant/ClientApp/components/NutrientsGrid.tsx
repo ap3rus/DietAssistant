@@ -68,6 +68,7 @@ export default class NutrientsGrid extends React.Component<NutrientsGridProps, {
                     row => row.type,
                     (row, type) => ({ ...row, type }),
                     this.handleUpdate,
+                    "(choose nutrient)",
                     !_.isUndefined(this.getNextAvailableNutrientType()) && createRowCreationFooter(this.handleCreate)
                 ),
                 createEditableField('Amount, grams', row => row.grams, (row, grams) => ({ ...row, grams }), this.handleUpdate),
