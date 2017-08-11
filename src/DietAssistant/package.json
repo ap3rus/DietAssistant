@@ -1,6 +1,10 @@
 {
+<<<<<<< HEAD
   "name": "DietAssistant",
   "private": true,
+=======
+  "name": "diet-assistant",
+>>>>>>> Add winstrap package
   "version": "0.0.0",
   "dependencies": {
     "@types/history": "4.6.0",
@@ -44,6 +48,7 @@
     "webpack": "2.5.1",
     "webpack-hot-middleware": "2.18.2",
     "webpack-merge": "4.1.0"
+    "winstrap": "^0.5.11"
   },
   "devDependencies": {
     "node-sass": "^4.5.3",
