@@ -50,7 +50,7 @@ export default class FoodEditor extends React.Component<FoodEditorProps, {}> {
 
     public render() {
         return (
-            <div>
+            <form>
                 <div className="form-group">
                     <label htmlFor="foodName">Name</label>
                     <input type="text" className="form-control" id="foodName" placeholder="Name" value={this.props.food.name} onChange={this.handleChangeName} />
@@ -68,7 +68,7 @@ export default class FoodEditor extends React.Component<FoodEditorProps, {}> {
                     </select>
                     <NutrientsGrid onChange={this.handleChangeNutrients} nutrients={this.props.food.nutrients} onCreate={this.handleCreateNutrient} />
                 </div>
-            </div>
+            </form>
         );
     }
 }

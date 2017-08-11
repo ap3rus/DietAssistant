@@ -17,6 +17,8 @@ module.exports = (env) => {
         },
         entry: {
             vendor: [
+                'winstrap/dist/js/vendor/jquery.min.js',
+                'bootstrap',
                 'winstrap/dist/css/winstrap.css',
                 'domain-task',
                 'event-source-polyfill',

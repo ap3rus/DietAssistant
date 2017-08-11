@@ -23,7 +23,7 @@ export default class EasyGrid<T> extends React.Component<EasyGridProps<T>, {}>{
     render() {
         return (
             <div className="table-responsive">
-                <table className="table table-condensed">
+                <table className="table table-condensed table-striped">
                     {this.props.showHeader && (
                         <thead>
                             <tr>
@@ -96,7 +96,7 @@ export function createDropdownField<T>(
 }
 
 export function createRowCreationFooter(onCreate: (this: void) => void) {
-    return <a href="javascript:void(0)" onClick={onCreate}>Add</a>;
+    return <a className="btn btn-primary" href="javascript:void(0)" onClick={onCreate}>Add</a>;
 }
 
 export function editable(value: any, onChange: (this: void, value: any) => void) {
