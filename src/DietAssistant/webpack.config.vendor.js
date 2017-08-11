@@ -12,13 +12,12 @@ module.exports = (env) => {
         resolve: { extensions: [ '.js' ] },
         module: {
             rules: [
-                { test: /\.(png|woff|woff2|eot|ttf|svg)(\?|$)/, use: 'url-loader?limit=100000' }
+                { test: /\.(png|jpg|jpeg|gif|woff|woff2|eot|ttf|svg)(\?|$)/, use: 'url-loader?limit=100000' }
             ]
         },
         entry: {
             vendor: [
-                'bootstrap',
-                'bootstrap/dist/css/bootstrap.css',
+                'winstrap/dist/css/winstrap.css',
                 'domain-task',
                 'event-source-polyfill',
                 'history',
