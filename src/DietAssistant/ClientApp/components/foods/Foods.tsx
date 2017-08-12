@@ -8,6 +8,7 @@ import { FoodsState } from './foodsReducer';
 import FoodsGrid from './FoodsGrid';
 import { IFood } from '../../contracts';
 import { withRouter } from 'react-router-dom'
+import Page from '../Page';
 
 type FoodsProps =
     FoodsState &
@@ -40,9 +41,9 @@ class Foods extends React.Component<FoodsProps, {}> {
 
     public render() {
         return (
-            <div>
+            <Page header="Foods">
                 <FoodsGrid foods={this.props.foods} onCreate={this.handleCreateFood} onRemove={this.handleRemoveFood} onSelect={this.handleEditFood} />
-            </div>
+            </Page>
         );
     }
 }

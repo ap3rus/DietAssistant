@@ -7,6 +7,7 @@ import { actionCreators } from './foodsActions';
 import { FoodsState } from './foodsReducer';
 import { IFood } from '../../contracts';
 import FoodEditor from './FoodEditor';
+import Page from '../Page';
 
 type EditFoodProps =
     {
@@ -29,9 +30,11 @@ class EditFood extends React.Component<EditFoodProps, {}> {
 
     public render() {
         return (
-            <div>
-                {this.props.selectedFood && <FoodEditor food={this.props.selectedFood} onChangeFood={this.handleChangeFood}  />}
-            </div>
+            <Page header="Edit food">
+                {this.props.selectedFood && (
+                    <FoodEditor food={this.props.selectedFood} onChangeFood={this.handleChangeFood} />
+                ) || "Oops, no food to edit, try going back."}
+            </Page>
         );
     }
 }

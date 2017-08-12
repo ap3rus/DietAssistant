@@ -6,9 +6,7 @@ export class Layout extends React.Component<{}, {}> {
         return (
             <div>
                 <NavMenu />
-                <div className='container-fluid'>
-                    { this.props.children }
-                </div>
+                { this.props.children }
             </div>
         );
     }
