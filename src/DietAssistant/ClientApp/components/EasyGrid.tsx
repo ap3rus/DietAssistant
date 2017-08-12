@@ -22,8 +22,7 @@ export default class EasyGrid<T> extends React.Component<EasyGridProps<T>, {}>{
 
     render() {
         return (
-            <div className="table-responsive">
-                <table className="table table-condensed table-striped">
+                <table className="table table-striped theme-alt">
                     {this.props.showHeader && (
                         <thead>
                             <tr>
@@ -54,7 +53,6 @@ export default class EasyGrid<T> extends React.Component<EasyGridProps<T>, {}>{
                         </tfoot>
                     )}
                 </table>
-            </div>
         );
     }
 }
@@ -104,16 +102,16 @@ export function editable(value: any, onChange: (this: void, value: any) => void)
     return <input className="form-control" value={value} onChange={(e) => { onChange(e.target.value); }} />
 }
 
-export function dropdown(value: any, options: Array<{ value: any, content: React.ReactNode }>, onChange: (this: void, value: any) => void, defaultContent: React.ReactNode) {
+export function dropdown(value: any, options: Array<{ value: any, content: React.ReactNode }>, onChange: (this: void, value: any, index: number) => void, defaultContent: React.ReactNode) {
     const d2 = (
-        <div className="dropdown">
+        <div className="dropdown theme-alt">
             <button className="btn btn-dropdown dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" role="button" aria-expanded="false">
                 {_.get(_.find(options, (option) => option.value == value), 'content', defaultContent)}
                 <span className="caret"></span>
             </button>
             <ul className="dropdown-menu" role="menu">
-                {_.map(options, (option: { value: any, content: React.ReactNode }) => (
-                    <li><a href="javascript:void(0)" onClick={onChange.bind(undefined, option.value)}>{option.content}</a></li>
+                {_.map(options, (option: { value: any, content: React.ReactNode }, index: number) => (
+                    <li><a href="javascript:void(0)" onClick={onChange.bind(undefined, option.value, index)}>{option.content}</a></li>
                 ))}
             </ul>
         </div>

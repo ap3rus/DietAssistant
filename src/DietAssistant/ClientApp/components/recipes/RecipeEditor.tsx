@@ -4,6 +4,7 @@ import { IRecipe, IFood, IServing, INutrient, NutrientType, IIngredient, getReci
 import ServingsGrid from '../ServingsGrid';
 import NutrientsGrid from '../NutrientsGrid';
 import IngredientsGrid from '../IngredientsGrid';
+import { dropdown } from '../EasyGrid';
 
 interface RecipeEditorProps {
     recipe: IRecipe;
@@ -19,8 +20,8 @@ export default class RecipeEditor extends React.Component<RecipeEditorProps, {}>
         this.handleChangeName = this.handleChangeName.bind(this);
     }
 
-    private handleChangeUnit(e) {
-        const nextUnit = this.props.recipe.servings[e.target.selectedIndex];
+    private handleChangeUnit(value, index) {
+        const nextUnit = this.props.recipe.servings[index];
         const nextRecipe = { ...this.props.recipe, unit: nextUnit };
         this.props.onChange(nextRecipe);
     }
@@ -49,7 +50,7 @@ export default class RecipeEditor extends React.Component<RecipeEditorProps, {}>
 
     public render() {
         return (
-            <div>
+            <form className="theme-alt">
                 <div className="form-group">
                     <label htmlFor="recipeName">Name</label>
                     <input type="text" className="form-control" id="recipeName" placeholder="Name" value={this.props.recipe.name} onChange={this.handleChangeName} />
@@ -64,14 +65,17 @@ export default class RecipeEditor extends React.Component<RecipeEditorProps, {}>
                 </div>
                 <div className="form-group">
                     <label>Nutrients per</label>
-                    <select className="form-control" value={this.props.recipe.unit && this.props.recipe.unit.grams} onChange={this.handleChangeUnit}>
-                        {_.map(this.props.recipe.servings, (serving, index) => (
-                            <option key={index} value={serving.grams}>{serving.name} &ndash; {serving.grams}g</option>
-                        ))}
-                    </select>
+                    <div>
+                        {dropdown(
+                            _.get(this.props.recipe.unit, 'grams'),
+                            _.map(this.props.recipe.servings, (serving, index) => ({ content: `${serving.name} - ${serving.grams}g`, value: serving.grams })),
+                            this.handleChangeUnit,
+                            '(select serving)'
+                        )}
+                    </div>
                     <NutrientsGrid nutrients={getRecipeNutrition(this.props.recipe).nutrients} isReadOnly={true} />
                 </div>
-            </div>
+            </form>
         );
     }
 }

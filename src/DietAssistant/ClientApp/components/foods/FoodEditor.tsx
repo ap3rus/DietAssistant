@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import { IFood, IServing, INutrient, NutrientType } from '../../contracts';
 import ServingsGrid from '../ServingsGrid';
 import NutrientsGrid from '../NutrientsGrid';
+import { dropdown } from '../EasyGrid';
 
 interface FoodEditorProps {
     food: IFood;
@@ -50,7 +51,7 @@ export default class FoodEditor extends React.Component<FoodEditorProps, {}> {
 
     public render() {
         return (
-            <form>
+            <form className="theme-alt">
                 <div className="form-group">
                     <label htmlFor="foodName">Name</label>
                     <input type="text" className="form-control" id="foodName" placeholder="Name" value={this.props.food.name} onChange={this.handleChangeName} />
@@ -61,11 +62,14 @@ export default class FoodEditor extends React.Component<FoodEditorProps, {}> {
                 </div>
                 <div className="form-group">
                     <label>Nutrients per</label>
-                    <select className="form-control" value={this.props.food.unit && this.props.food.unit.grams} onChange={this.handleChangeUnit}>
-                        {_.map(this.props.food.servings, (serving, index) => (
-                            <option key={index} value={serving.grams}>{serving.name} &ndash; {serving.grams}g</option>
-                        ))}
-                    </select>
+                    <div>
+                        {dropdown(
+                            _.get(this.props.food.unit, 'grams'),
+                            _.map(this.props.food.servings, (serving, index) => ({ content: `${serving.name} - ${serving.grams}g`, value: serving.grams })),
+                            this.handleChangeUnit,
+                            '(select serving)'
+                        )}
+                    </div>
                     <NutrientsGrid onChange={this.handleChangeNutrients} nutrients={this.props.food.nutrients} onCreate={this.handleCreateNutrient} />
                 </div>
             </form>

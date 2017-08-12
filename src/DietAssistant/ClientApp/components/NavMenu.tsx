@@ -5,7 +5,7 @@ export class NavMenu extends React.Component<{}, {}> {
     public render() {
         return (
             <nav className="navbar navbar-default">
-                <div className="navbar-global color-accent theme-dark">
+                <div className="navbar-global color-accent theme-alt">
                     <div className="container-fluid">
                         <div className="navbar-header">
                             <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-navbar-collapse">
