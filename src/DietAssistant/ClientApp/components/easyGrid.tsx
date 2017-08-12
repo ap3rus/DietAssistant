@@ -76,7 +76,7 @@ export function createEditableField<T>(
 export function createRowRemovalField<T>(onRemove: (this: void, row: T, index: number) => void) {
     return {
         header: '',
-        content: (row: T, index: number) => <a href="javascript:void(0)" onClick={(e) => onRemove(row, index)}>X</a>
+        content: (row: T, index: number) => <a href="javascript:void(0)" onClick={(e) => onRemove(row, index)}><span className="glyph glyph-delete"></span></a>
     };
 }
 
