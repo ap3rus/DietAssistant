@@ -24,7 +24,6 @@ module.exports = (env) => {
         plugins: [new CheckerPlugin()]
     });
 
-    const extractCss = new ExtractTextPlugin('site.css');
     const extractSass = new ExtractTextPlugin('styles.css');
 
     // Configuration for client-side bundle suitable for running in browsers
@@ -33,7 +32,6 @@ module.exports = (env) => {
         entry: { 'main-client': './ClientApp/boot-client.tsx' },
         module: {
             rules: [
-                { test: /\.css$/, use: extractCss.extract({ use: isDevBuild ? 'css-loader' : 'css-loader?minimize' }) },
                 {
                     test: /\.scss$/,
                     use: extractSass.extract({
@@ -49,7 +47,6 @@ module.exports = (env) => {
         },
         output: { path: path.join(__dirname, clientBundleOutputDir) },
         plugins: [
-            extractCss,
             extractSass,
             new webpack.DllReferencePlugin({
                 context: __dirname,

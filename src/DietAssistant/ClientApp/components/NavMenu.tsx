@@ -19,27 +19,27 @@ export class NavMenu extends React.Component<{}, {}> {
                             <ul className="nav navbar-nav">
                                 <li>
                                     <NavLink exact to={'/'} activeClassName='active'>
-                                        <span className='glyphicon glyphicon-home'></span> Home
+                                        <span className='glyph glyph-home'></span> Home
                                     </NavLink>
                                 </li>
                                 <li>
                                     <NavLink to={'/foods'} activeClassName='active'>
-                                        <span className='glyphicon glyphicon-apple'></span> Foods
+                                        <span className='glyph glyph-shopping-cart'></span> Foods
                                     </NavLink>
                                 </li>
                                 <li>
                                     <NavLink to={'/recipes'} activeClassName='active'>
-                                        <span className='glyphicon glyphicon-cutlery'></span> Recipes
+                                        <span className='glyph glyph-list'></span> Recipes
                                     </NavLink>
                                 </li>
                                 <li>
                                     <NavLink to={'/planning'} activeClassName='active'>
-                                        <span className='glyphicon glyphicon-tasks'></span> Planning
+                                        <span className='glyph glyph-calculator'></span> Planning
                                     </NavLink>
                                 </li>
                                 <li>
                                     <NavLink to={'/diary'} activeClassName='active'>
-                                        <span className='glyphicon glyphicon-calendar'></span> Diary
+                                        <span className='glyph glyph-calendar'></span> Diary
                                     </NavLink>
                                 </li>
                             </ul>
