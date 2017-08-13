@@ -17,9 +17,9 @@ export const foodsReducer: Reducer<FoodsState> = (state: FoodsState = defaultSta
         case SET_FOODS:
             return { ...state, foods: action.foods };
 
-        case SET_SELECTED_FOOD: {
+        case SET_SELECTED_FOOD:
             return { ...state, selectedFood: action.food };
-        }
+
         default:
             return state;
     }

@@ -1,5 +1,4 @@
 ﻿import * as _ from 'lodash';
-// todo get rid of classes
 
 export interface IIdentifiable {
     id?: string;
