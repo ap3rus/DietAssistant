@@ -1,4 +1,5 @@
-﻿import * as React from 'react';
+﻿// todo refactor Foods and Recipes to remove code duplication
+import * as React from 'react';
 import * as _ from 'lodash';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { connect } from 'react-redux';
