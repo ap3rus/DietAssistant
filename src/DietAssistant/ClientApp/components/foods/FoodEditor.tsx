@@ -20,8 +20,8 @@ export default class FoodEditor extends React.Component<FoodEditorProps, {}> {
         this.handleChangeName = this.handleChangeName.bind(this);
     }
 
-    private handleChangeUnit(e) {
-        const nextUnit = this.props.food.servings[e.target.selectedIndex];
+    private handleChangeUnit(grams, selectedIndex) {
+        const nextUnit = this.props.food.servings[selectedIndex];
         const nextFood = { ...this.props.food, unit: nextUnit };
         this.props.onChangeFood(nextFood);
     }

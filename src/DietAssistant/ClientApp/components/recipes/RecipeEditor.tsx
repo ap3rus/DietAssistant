@@ -20,8 +20,8 @@ export default class RecipeEditor extends React.Component<RecipeEditorProps, {}>
         this.handleChangeName = this.handleChangeName.bind(this);
     }
 
-    private handleChangeUnit(value, index) {
-        const nextUnit = this.props.recipe.servings[index];
+    private handleChangeUnit(grams, selectedIndex) {
+        const nextUnit = this.props.recipe.servings[selectedIndex];
         const nextRecipe = { ...this.props.recipe, unit: nextUnit };
         this.props.onChange(nextRecipe);
     }
@@ -61,7 +61,7 @@ export default class RecipeEditor extends React.Component<RecipeEditorProps, {}>
                 </div>
                 <div className="form-group">
                     <label>Ingredients</label>
-                    <IngredientsGrid ingredients={this.props.recipe.ingredients} onChange={this.handleChangeIngredients} onCreate={this.handleCreateIngredient} />
+                    <IngredientsGrid unavailableRecipeIds={[this.props.recipe.id]} ingredients={this.props.recipe.ingredients} onChange={this.handleChangeIngredients} onCreate={this.handleCreateIngredient} />
                 </div>
                 <div className="form-group">
                     <label>Nutrients per</label>

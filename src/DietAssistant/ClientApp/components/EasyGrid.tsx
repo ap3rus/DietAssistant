@@ -102,17 +102,40 @@ export function editable(value: any, onChange: (this: void, value: any) => void)
     return <input className="form-control" value={value} onChange={(e) => { onChange(e.target.value); }} />
 }
 
-export function dropdown(value: any, options: Array<{ value: any, content: React.ReactNode }>, onChange: (this: void, value: any, index: number) => void, defaultContent: React.ReactNode) {
+interface OptionType { value: any; content: React.ReactNode; disabled?: boolean }
+interface OptionsGroupType { header: React.ReactNode; options: OptionType[] }
+
+type OptionsType = OptionType[] | OptionsGroupType[];
+
+export function dropdown(value: any, options: OptionsType, onChange: (this: void, value: any, index: number) => void, defaultContent: React.ReactNode) {
+    const allOptions = _.flatMap(options, (option: OptionType | OptionsGroupType) => _.isArray((option as OptionsGroupType).options) ? (option as OptionsGroupType).options : option as OptionType);
+
     const d2 = (
         <div className="dropdown theme-alt">
             <button className="btn btn-dropdown dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" role="button" aria-expanded="false">
-                {_.get(_.find(options, (option) => option.value == value), 'content', defaultContent)}
+                {_.get(_.find(allOptions, (option) => option.value == value), 'content', defaultContent)}
                 <span className="caret"></span>
             </button>
             <ul className="dropdown-menu" role="menu">
-                {_.map(options, (option: { value: any, content: React.ReactNode }, index: number) => (
-                    <li><a href="javascript:void(0)" onClick={onChange.bind(undefined, option.value, index)}>{option.content}</a></li>
-                ))}
+                {_.map(options, (option: OptionType | OptionsGroupType, index: number) => {
+                    const optionsToRender = _.isArray((option as OptionsGroupType).options) ? (option as OptionsGroupType).options : [option as OptionType];
+
+                    if (optionsToRender.length == 0) {
+                        return null;
+                    }
+
+                    const result = _.map(optionsToRender, option => option.disabled ? (
+                        <li className="disabled"><a href="javascript:void(0)">{option.content}</a></li>
+                    ): (
+                        <li><a href="javascript:void(0)" onClick={onChange.bind(undefined, option.value, index)}>{option.content}</a></li>
+                    ));
+
+                    if ((option as OptionsGroupType).header) {
+                        result.unshift(<li className="dropdown-header theme-alt"><div className="p-l-xxs p-t-xxs">{(option as OptionsGroupType).header}</div></li>);
+                    }
+
+                    return result;
+                })}
             </ul>
         </div>
     );

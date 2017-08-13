@@ -43,7 +43,7 @@ export interface IRecipe extends IIdentifiable {
 export interface IIngredient {
     amount: number;
     unit: IServing;
-    food: IFood;
+    food: IFood | IRecipe;
 }
 
 export interface IMeal {
@@ -68,9 +68,13 @@ function changeServing(nutrient: INutrient, from: IServing, to: IServing): INutr
 }
 
 export function getIngredientNutrition(ingredient: IIngredient): INutrition {
+    const ingredientNutrients = (ingredient.food as IFood).nutrients ?
+        (ingredient.food as IFood).nutrients :
+        getRecipeNutrition(ingredient.food as IRecipe).nutrients;
+
     const nutrients = ingredient.food.unit && ingredient.unit ?
-        ingredient.food.nutrients.map(nutrient => changeServing(nutrient, ingredient.food.unit, ingredient.unit)) :
-        ingredient.food.nutrients;
+        ingredientNutrients.map(nutrient => changeServing(nutrient, ingredient.food.unit, ingredient.unit)) :
+        ingredientNutrients;
     return { name: ingredient.food.name, unit: ingredient.unit, nutrients };
 }
 
@@ -85,7 +89,7 @@ export function getIngredientWeight(ingredient: IIngredient) {
 
 function composeNutritions(name: string, nutritions: INutrition[]): INutrition {
     const result: { [id: number]: number } = {};
-    const unit: IServing = { name: "Serving", grams: 0 };
+    const unit: IServing = { name: 'Serving', grams: 0 };
 
     for (let nutrition of nutritions) {
         unit.grams += nutrition.unit && nutrition.unit.grams || 0;

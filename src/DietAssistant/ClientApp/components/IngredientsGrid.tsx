@@ -8,14 +8,21 @@ import { ApplicationState } from '../store';
 class EasyGridWrapper extends EasyGrid<IIngredient> { }
 
 interface IngredientsGridProps {
-    availableFoods?: IFood[];
-    availableRecipes?: IRecipe[];
+    unavailableRecipeIds?: string[];
+    foods?: IFood[];
+    recipes?: IRecipe[];
     ingredients: IIngredient[];
     onChange: (this: void, ingredients: IIngredient[]) => void;
     onCreate: (this: void) => void;
 }
 
 class IngredientsGrid extends React.Component<IngredientsGridProps, {}> {
+    static defaultProps: Partial<IngredientsGridProps> = {
+        unavailableRecipeIds: [],
+        foods: [],
+        recipes: []
+    }
+
     constructor() {
         super();
         this.handleChange = this.handleChange.bind(this);
@@ -53,8 +60,11 @@ class IngredientsGrid extends React.Component<IngredientsGridProps, {}> {
                     row.food.name :
                     dropdown(
                         null,
-                        _.map(this.props.availableFoods, (food: IFood) => ({ value: food.id, content: food.name })),
-                        (id) => this.handleUpdate({ ...row, food: _.find(this.props.availableFoods, food => food.id == id) }, index),
+                        [
+                            { header: 'Foods', options: _.map(this.props.foods, (food: IFood) => ({ value: food.id, content: food.name })) },
+                            { header: 'Recipes', options: _.map(_.reject(this.props.recipes, (recipe) => _.includes(this.props.unavailableRecipeIds, recipe.id)), (recipe: IRecipe) => ({ value: recipe.id, content: recipe.name })) }
+                        ],
+                        (id) => this.handleUpdate({ ...row, food: _.find(this.props.foods, food => food.id == id) || _.find(this.props.recipes, recipe => recipe.id == id) }, index),
                         "(find food)"),
                 footer: createRowCreationFooter(this.handleCreate)
             },
@@ -81,4 +91,4 @@ class IngredientsGrid extends React.Component<IngredientsGridProps, {}> {
     }
 }
 
-export default connect((state: ApplicationState) => ({ availableFoods: state.foods.foods, availableRecipes: [] } as Partial<IngredientsGridProps>), {})(IngredientsGrid) as typeof IngredientsGrid;
+export default connect((state: ApplicationState) => ({ foods: state.foods.foods, recipes: state.recipes.recipes } as Partial<IngredientsGridProps>), {})(IngredientsGrid) as typeof IngredientsGrid;
