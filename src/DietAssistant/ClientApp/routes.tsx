@@ -8,7 +8,7 @@ import Recipes from './components/recipes/Recipes';
 import EditRecipe from './components/recipes/EditRecipe';
 
 export const routes = <Layout>
-    <Route exact path='/' component={ Home } />
+    <Route exact path='/' component={Home} />
     <Route exact path='/foods' component={Foods} />
     <Route exact path='/foods/edit' component={EditFood} />
     <Route exact path='/recipes' component={Recipes} />

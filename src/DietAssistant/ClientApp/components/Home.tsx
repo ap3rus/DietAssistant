@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { RouteComponentProps } from 'react-router-dom';
-import { IRecipe, IFood, IServing, INutrient, NutrientType, IIngredient, IDayMealPlan } from '../contracts';
+import { IRecipe, IFood, IServing, INutrient, NutrientType, IIngredient, IDayMealPlan, Time } from '../contracts';
 import MealPlanEditor from './planning/MealPlanEditor';
 import Page from './Page';
 
@@ -13,7 +13,11 @@ export default class Home extends React.Component<RouteComponentProps<{}>, HomeS
     constructor() {
         super();
         this.handleChangeMealPlan = this.handleChangeMealPlan.bind(this);
-        const mealPlan = { name: '', meals: [] };
+        const mealPlan = { name: '', meals: [
+            { name: 'Breakfast', time: new Time(8, 0), foods: [] },
+            { name: 'Lunch', time: new Time(12, 0), foods: [] },
+            { name: 'Dinner', time: new Time(18, 30), foods: [] }
+        ] };
         this.state = { mealPlan };
     }
 

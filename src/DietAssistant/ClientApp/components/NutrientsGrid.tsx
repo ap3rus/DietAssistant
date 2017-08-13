@@ -56,7 +56,7 @@ export default class NutrientsGrid extends React.Component<NutrientsGridProps, {
         const data = this.props.nutrients;
         const fields = this.props.isReadOnly ?
             [
-                { header: 'Nutrient', content: (row) => row.type },
+                { header: 'Nutrient', content: (row) => isNaN(parseInt(row.type, 10)) ? row.type : NutrientType[row.type] },
                 { header: 'Amount, grams', content: (row) => row.grams }
             ] :
             [

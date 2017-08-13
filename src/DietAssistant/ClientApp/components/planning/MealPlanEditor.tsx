@@ -2,8 +2,9 @@
 import * as _ from 'lodash';
 import ServingsGrid from '../ServingsGrid';
 import NutrientsGrid from '../NutrientsGrid';
-import { IDayMealPlan, IMeal, Time, getMealPlanNutrition } from '../../contracts';
+import { IDayMealPlan, IMeal, IIngredient, Time, getMealPlanNutrition } from '../../contracts';
 import { dropdown } from '../EasyGrid';
+import IngredientsGrid from '../IngredientsGrid';
 
 interface MealPlanEditorProps {
     mealPlan: IDayMealPlan;
@@ -17,6 +18,8 @@ export default class MealPlanEditor extends React.Component<MealPlanEditorProps,
         this.handleChangeMealName = this.handleChangeMealName.bind(this);
         this.handleAddMeal = this.handleAddMeal.bind(this);
         this.handleChangeMealTime = this.handleChangeMealTime.bind(this);
+        this.handleChangeMealFoods = this.handleChangeMealFoods.bind(this);
+        this.handleRemoveMeal = this.handleRemoveMeal.bind(this);
     }
 
     private handleChangeName(e) {
@@ -31,9 +34,9 @@ export default class MealPlanEditor extends React.Component<MealPlanEditorProps,
         this.props.onChangeMealPlan(nextMealPlan);
     }
 
-    private handleChangeMealTime(nextTime, index) {
+    private handleChangeMealTime(nextTimeStr: string, index: number) {
         const nextMeals = [...this.props.mealPlan.meals];
-        nextMeals[index] = { ...this.props.mealPlan.meals[index], time: Time.parse(nextTime) };
+        nextMeals[index] = { ...this.props.mealPlan.meals[index], time: Time.parse(nextTimeStr) };
         const nextMealPlan = { ...this.props.mealPlan, meals: nextMeals };
         this.props.onChangeMealPlan(nextMealPlan);
     }
@@ -43,6 +46,20 @@ export default class MealPlanEditor extends React.Component<MealPlanEditorProps,
         const nextTime = new Time(lastTime.hours, lastTime.minutes);
         const meal: IMeal = { name: '', time: nextTime, foods: [] };
         const nextMealPlan = { ...this.props.mealPlan, meals: [...this.props.mealPlan.meals, meal] };
+        this.props.onChangeMealPlan(nextMealPlan);
+    }
+
+    private handleChangeMealFoods(ingredients: IIngredient[], index: number) {
+        const nextMeals = [...this.props.mealPlan.meals];
+        nextMeals[index] = { ...this.props.mealPlan.meals[index], foods: ingredients };
+        const nextMealPlan = { ...this.props.mealPlan, meals: nextMeals };
+        this.props.onChangeMealPlan(nextMealPlan);
+    }
+
+    private handleRemoveMeal(meal: IMeal, index: number) {
+        const nextMeals = [...this.props.mealPlan.meals];
+        nextMeals.splice(index, 1);
+        const nextMealPlan = { ...this.props.mealPlan, meals: nextMeals };
         this.props.onChangeMealPlan(nextMealPlan);
     }
 
@@ -73,16 +90,20 @@ export default class MealPlanEditor extends React.Component<MealPlanEditorProps,
                                             <label htmlFor={'mealTime-' + index}>Time</label>
                                             <input type="time" className="form-control" id={'mealTime-' + index} placeholder="Name" value={meal.time.toString()} onChange={(e) => this.handleChangeMealTime(e.target.value, index)} />
                                         </div>
+                                        <div className="col-md-1">
+                                            <a href="javascript:void(0)" onClick={(e) => this.handleRemoveMeal(meal, index)}><span className="glyph glyph-delete"></span></a>
+                                        </div>
                                     </div>
                                 </div>
 
                                 <div className="collapse" id={'list-item-line-' + index}>
                                     <div className="row">
-                                        <div className="col-md-18 col-md-offset-2">
-                                            Lorem ipsum dolor sit amet.
-                                        </div>
-                                        <div className="col-md-4 text-right">
-                                            <button className="btn btn-primary btn-sm">Button</button>
+                                        <div className="col-md-24">
+                                            <label>Ingredients</label>
+                                            <IngredientsGrid
+                                                ingredients={meal.foods}
+                                                onChange={(ingredients) => this.handleChangeMealFoods(ingredients, index)}
+                                            />
                                         </div>
                                     </div>
                                 </div>
