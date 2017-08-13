@@ -1,26 +1,31 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { RouteComponentProps } from 'react-router-dom';
-import ServingsGrid from './ServingsGrid';
-import NutrientsGrid from './NutrientsGrid';
-import { IRecipe, IFood, IServing, INutrient, NutrientType, IIngredient } from '../contracts';
-import IngredientsGrid from './IngredientsGrid';
-import RecipeEditor from './recipes/RecipeEditor';
+import { IRecipe, IFood, IServing, INutrient, NutrientType, IIngredient, IDayMealPlan } from '../contracts';
+import MealPlanEditor from './planning/MealPlanEditor';
 import Page from './Page';
 
 interface HomeState {
+    mealPlan: IDayMealPlan;
 }
 
 export default class Home extends React.Component<RouteComponentProps<{}>, HomeState> {
     constructor() {
         super();
+        this.handleChangeMealPlan = this.handleChangeMealPlan.bind(this);
+        const mealPlan = { name: '', meals: [] };
+        this.state = { mealPlan };
+    }
+
+    handleChangeMealPlan(nextMealPlan: IDayMealPlan) {
+        this.setState({ mealPlan: nextMealPlan });
     }
 
     public render() {
 
         return (
-            <Page header="Home">
-                Here will be some dashboards and other cool things.
+            <Page header="Home - testing MealPlanEditor">
+                <MealPlanEditor mealPlan={this.state.mealPlan} onChangeMealPlan={this.handleChangeMealPlan} />
             </Page>
         );
     }

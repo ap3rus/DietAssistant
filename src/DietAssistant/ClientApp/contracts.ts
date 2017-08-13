@@ -1,5 +1,21 @@
 ﻿import * as _ from 'lodash';
 
+export class Time {
+    constructor(public hours: number, public minutes: number) {
+    }
+
+    toString() {
+        return `${this.hours < 10 ? '0' : ''}${this.hours}:${this.minutes < 10 ? '0' : ''}${this.minutes}`;
+    }
+
+    static parse(timeStr: string): Time {
+        const match = timeStr.match(/^([0-9]|0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$/);
+        if (match) {
+            return new Time(parseInt(match[1], 10), parseInt(match[2], 10));
+        }
+    }
+}
+
 export interface IIdentifiable {
     id?: string;
 }
@@ -49,7 +65,7 @@ export interface IIngredient {
 
 export interface IMeal {
     name: string;
-    time: Date;
+    time: Time;
     foods: IIngredient[];
 }
 
@@ -120,7 +136,7 @@ export function getMealNutrition(meal: IMeal): INutrition {
     return composeNutritions(meal.name, _.map(meal.foods, ingredient => getIngredientNutrition(ingredient)));
 }
 
-function getMealPlanNutrition(plan: IDayMealPlan): INutrition {
+export function getMealPlanNutrition(plan: IDayMealPlan): INutrition {
     const mealsNutritions = _.map(plan.meals, meal => getMealNutrition(meal));
     return composeNutritions(plan.name, mealsNutritions);
 }
