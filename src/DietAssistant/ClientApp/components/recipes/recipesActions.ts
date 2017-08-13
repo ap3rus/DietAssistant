@@ -2,6 +2,9 @@
 import { IRecipe } from '../../contracts';
 import { AppThunkAction } from '../../store';
 import * as uuidv1 from 'uuid/v1';
+import { IRepository, LocalStorageRepository } from '../../repository';
+
+const repository: IRepository<IRecipe> = new LocalStorageRepository<IRecipe>("diet-assistant.recipes");
 
 type SetRecipesType = 'recipes/set-recipes';
 type SetSelectedRecipeType = 'recipes/set-selected-recipe';
@@ -17,6 +20,10 @@ export type KnownAction = SetRecipesAction | SetSelectedRecipeAction;
 export const actionCreators = {
     setRecipes: (recipes: IRecipe[]) => <SetRecipesAction>{ type: SET_RECIPES, recipes },
     setSelectedRecipe: (recipe: IRecipe) => <SetSelectedRecipeAction>{ type: SET_SELECTED_RECIPE, recipe },
+    loadRecipesFromRepository: (): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        const recipes = repository.getAll();
+        dispatch(actionCreators.setRecipes(recipes));
+    },
     upsertRecipe: (recipe: IRecipe): AppThunkAction<KnownAction> => (dispatch, getState) => {
         const nextRecipe = { ...recipe };
         const nextRecipes = [...getState().recipes.recipes || []];
@@ -30,6 +37,7 @@ export const actionCreators = {
 
         dispatch(actionCreators.setRecipes(nextRecipes));
         dispatch(actionCreators.setSelectedRecipe(nextRecipe));
+        repository.save(nextRecipe.id, nextRecipe);
     },
     removeRecipe: (recipe: IRecipe): AppThunkAction<KnownAction> => (dispatch, getState) => {
         const nextRecipes = [...getState().recipes.recipes || []];
@@ -37,5 +45,6 @@ export const actionCreators = {
         nextRecipes.splice(index, 1);
         dispatch(actionCreators.setRecipes(nextRecipes));
         dispatch(actionCreators.setSelectedRecipe(null));
+        repository.remove(recipe.id);
     }
 };

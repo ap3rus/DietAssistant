@@ -49,6 +49,7 @@ export default class RecipeEditor extends React.Component<RecipeEditorProps, {}>
     }
 
     public render() {
+        // todo fix unavailableRecipeIds to analyze circular dependencies, not only direct
         return (
             <form className="theme-alt">
                 <div className="form-group">

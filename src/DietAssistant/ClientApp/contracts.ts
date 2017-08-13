@@ -40,6 +40,7 @@ export interface IRecipe extends IIdentifiable {
     ingredients: IIngredient[];
 }
 
+// todo replace food with foodId + create selector
 export interface IIngredient {
     amount: number;
     unit: IServing;
