@@ -11,13 +11,11 @@ interface NutrientsGridProps
     nutrients: INutrient[];
     isReadOnly?: boolean;
     onChange?: (this: void, nutrients: INutrient[]) => void;
-    onCreate?: (this: void, nutrient: INutrient) => void;
 }
 
 export default class NutrientsGrid extends React.Component<NutrientsGridProps, {}> {
     public static defaultProps: Partial<NutrientsGridProps> = {
-        onChange: () => { },
-        onCreate: () => { }
+        onChange: () => { }
     };
 
     constructor() {

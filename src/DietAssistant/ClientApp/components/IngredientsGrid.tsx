@@ -8,16 +8,17 @@ import { ApplicationState } from '../store';
 class EasyGridWrapper extends EasyGrid<IIngredient> { }
 
 interface IngredientsGridProps {
+    unavailableFoodIds?: string[];
     unavailableRecipeIds?: string[];
     foods?: IFood[];
     recipes?: IRecipe[];
     ingredients: IIngredient[];
     onChange: (this: void, ingredients: IIngredient[]) => void;
-    onCreate: (this: void) => void;
 }
 
 class IngredientsGrid extends React.Component<IngredientsGridProps, {}> {
     static defaultProps: Partial<IngredientsGridProps> = {
+        unavailableFoodIds: [],
         unavailableRecipeIds: [],
         foods: [],
         recipes: []
@@ -53,6 +54,9 @@ class IngredientsGrid extends React.Component<IngredientsGridProps, {}> {
     }
 
     public render() {
+        const foodOptions = _.map(_.reject(this.props.foods, (food) => _.includes(this.props.unavailableFoodIds, food.id)), (food: IFood) => ({ value: food.id, content: food.name }));
+        const recipeOptions = _.map(_.reject(this.props.recipes, (recipe) => _.includes(this.props.unavailableRecipeIds, recipe.id)), (recipe: IRecipe) => ({ value: recipe.id, content: recipe.name }));
+
         const fields: Array<FieldDefinition<IIngredient>> = [
             {
                 header: 'Name',
@@ -61,12 +65,13 @@ class IngredientsGrid extends React.Component<IngredientsGridProps, {}> {
                     dropdown(
                         null,
                         [
-                            { header: 'Foods', options: _.map(this.props.foods, (food: IFood) => ({ value: food.id, content: food.name })) },
-                            { header: 'Recipes', options: _.map(_.reject(this.props.recipes, (recipe) => _.includes(this.props.unavailableRecipeIds, recipe.id)), (recipe: IRecipe) => ({ value: recipe.id, content: recipe.name })) }
+                            { header: 'Foods', options: foodOptions },
+                            { header: 'Recipes', options: recipeOptions }
                         ],
                         (id) => this.handleUpdate({ ...row, food: _.find(this.props.foods, food => food.id == id) || _.find(this.props.recipes, recipe => recipe.id == id) }, index),
                         "(find food)"),
-                footer: createRowCreationFooter(this.handleCreate)
+                footer: (foodOptions.length > 0 || recipeOptions.length > 0) ?
+                    createRowCreationFooter(this.handleCreate) : null
             },
             {
                 header: 'Amount',

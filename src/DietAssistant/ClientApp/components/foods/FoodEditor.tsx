@@ -16,7 +16,6 @@ export default class FoodEditor extends React.Component<FoodEditorProps, {}> {
         this.handleChangeUnit = this.handleChangeUnit.bind(this);
         this.handleChangeServings = this.handleChangeServings.bind(this);
         this.handleChangeNutrients = this.handleChangeNutrients.bind(this);
-        this.handleCreateNutrient = this.handleCreateNutrient.bind(this);
         this.handleChangeName = this.handleChangeName.bind(this);
     }
 
@@ -36,11 +35,6 @@ export default class FoodEditor extends React.Component<FoodEditorProps, {}> {
 
     handleChangeNutrients(nutrients: INutrient[]) {
         const nextFood = { ...this.props.food, nutrients };
-        this.props.onChangeFood(nextFood);
-    }
-
-    handleCreateNutrient(nutrient: INutrient) {
-        const nextFood = { ...this.props.food, nutrients: [...this.props.food.nutrients, nutrient] };
         this.props.onChangeFood(nextFood);
     }
 
@@ -70,7 +64,7 @@ export default class FoodEditor extends React.Component<FoodEditorProps, {}> {
                             '(select serving)'
                         )}
                     </div>
-                    <NutrientsGrid onChange={this.handleChangeNutrients} nutrients={this.props.food.nutrients} onCreate={this.handleCreateNutrient} />
+                    <NutrientsGrid onChange={this.handleChangeNutrients} nutrients={this.props.food.nutrients} />
                 </div>
             </form>
         );

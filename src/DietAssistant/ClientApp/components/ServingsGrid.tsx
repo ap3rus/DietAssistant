@@ -36,7 +36,7 @@ export default class ServingsGrid extends React.Component<ServingsGridProps, {}>
 
     private handleUpdate(serving: IServing, index: number) {
         const nextServings = [...this.props.servings];
-        nextServings[index] = serving;
+        nextServings[index] = { ...serving, grams: serving.grams };
         this.props.onChange(nextServings);
     }
 

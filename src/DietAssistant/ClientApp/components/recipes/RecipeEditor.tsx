@@ -28,7 +28,9 @@ export default class RecipeEditor extends React.Component<RecipeEditorProps, {}>
 
     handleChangeServings(servings: IServing[]) {
         const nextRecipe = { ...this.props.recipe, servings };
-        if (!nextRecipe.unit && servings.length > 0) {
+        if (servings.length > 0 &&
+            (!nextRecipe.unit || !_.includes(_.map(servings, (serving) => serving.grams), nextRecipe.unit.grams))) {
+
             nextRecipe.unit = servings[0];
         }
         this.props.onChange(nextRecipe);
@@ -37,10 +39,6 @@ export default class RecipeEditor extends React.Component<RecipeEditorProps, {}>
     handleChangeIngredients(ingredients: IIngredient[]) {
         const nextRecipe = { ...this.props.recipe, ingredients };
         this.props.onChange(nextRecipe);
-    }
-
-    handleCreateIngredient() {
-        // todo 
     }
 
     handleChangeName(e) {
@@ -62,7 +60,12 @@ export default class RecipeEditor extends React.Component<RecipeEditorProps, {}>
                 </div>
                 <div className="form-group">
                     <label>Ingredients</label>
-                    <IngredientsGrid unavailableRecipeIds={[this.props.recipe.id]} ingredients={this.props.recipe.ingredients} onChange={this.handleChangeIngredients} onCreate={this.handleCreateIngredient} />
+                    <IngredientsGrid
+                        unavailableFoodIds={_.map(this.props.recipe.ingredients, (ingredient) => ingredient.food && ingredient.food.id)}
+                        unavailableRecipeIds={[this.props.recipe.id]}
+                        ingredients={this.props.recipe.ingredients}
+                        onChange={this.handleChangeIngredients}
+                    />
                 </div>
                 <div className="form-group">
                     <label>Nutrients per</label>
