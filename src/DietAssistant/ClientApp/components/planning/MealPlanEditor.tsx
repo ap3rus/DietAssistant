@@ -88,7 +88,7 @@ export default class MealPlanEditor extends React.Component<MealPlanEditorProps,
                                         </div>
                                         <div className="col-md-6">
                                             <label htmlFor={'mealTime-' + index}>Time</label>
-                                            <input type="time" className="form-control" id={'mealTime-' + index} placeholder="Name" value={meal.time.toString()} onChange={(e) => this.handleChangeMealTime(e.target.value, index)} />
+                                            <input type="time" className="form-control" id={'mealTime-' + index} placeholder="Name" value={meal.time && meal.time.toString()} onChange={(e) => this.handleChangeMealTime(e.target.value, index)} />
                                         </div>
                                         <div className="col-md-1">
                                             <a href="javascript:void(0)" onClick={(e) => this.handleRemoveMeal(meal, index)}><span className="glyph glyph-delete"></span></a>
