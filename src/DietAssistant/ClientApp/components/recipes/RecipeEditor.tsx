@@ -49,7 +49,7 @@ export default class RecipeEditor extends React.Component<RecipeEditorProps, {}>
     public render() {
         // todo fix unavailableRecipeIds to analyze circular dependencies, not only direct
         return (
-            <form className="theme-alt">
+            <form>
                 <div className="form-group">
                     <label htmlFor="recipeName">Name</label>
                     <input type="text" className="form-control" id="recipeName" placeholder="Name" value={this.props.recipe.name} onChange={this.handleChangeName} />

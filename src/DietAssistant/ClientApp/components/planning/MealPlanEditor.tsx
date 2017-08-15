@@ -65,7 +65,7 @@ export default class MealPlanEditor extends React.Component<MealPlanEditorProps,
 
     public render() {
         return (
-            <form className="theme-alt">
+            <form>
                 <div className="form-group">
                     <label htmlFor="foodName">Name</label>
                     <input type="text" className="form-control" id="foodName" placeholder="Name" value={this.props.mealPlan.name} onChange={this.handleChangeName} />
@@ -76,9 +76,9 @@ export default class MealPlanEditor extends React.Component<MealPlanEditorProps,
                     <ol className="list-items">
                         {_.map(this.props.mealPlan.meals, (meal, index) => (
                             <li key={index} className="list-items-row">
-                                <div>
+                                <div data-toggle="collapse" aria-expanded="false" data-target={'#list-item-line-' + index}>
                                     <div className="row">
-                                        <div className="col-md-1" data-toggle="collapse" aria-expanded="false" data-target={'#list-item-line-' + index}>
+                                        <div className="col-md-1">
                                             <i className="glyph glyph-add"></i>
                                             <i className="glyph glyph-remove"></i>
                                         </div>

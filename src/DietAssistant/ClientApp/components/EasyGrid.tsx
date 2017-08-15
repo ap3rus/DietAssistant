@@ -22,7 +22,7 @@ export default class EasyGrid<T> extends React.Component<EasyGridProps<T>, {}>{
 
     render() {
         return (
-                <table className="table table-striped theme-alt">
+                <table className="table table-striped">
                     {this.props.showHeader && (
                         <thead>
                             <tr>
@@ -111,7 +111,7 @@ export function dropdown(value: any, options: OptionsType, onChange: (this: void
     const allOptions = _.flatMap(options, (option: OptionType | OptionsGroupType) => _.isArray((option as OptionsGroupType).options) ? (option as OptionsGroupType).options : option as OptionType);
 
     const d2 = (
-        <div className="dropdown theme-alt">
+        <div className="dropdown">
             <button className="btn btn-dropdown dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" role="button" aria-expanded="false">
                 {_.get(_.find(allOptions, (option) => option.value == value), 'content', defaultContent)}
                 <span className="caret"></span>
@@ -131,7 +131,7 @@ export function dropdown(value: any, options: OptionsType, onChange: (this: void
                     ));
 
                     if ((option as OptionsGroupType).header) {
-                        result.unshift(<li className="dropdown-header theme-alt"><div className="p-l-xxs p-t-xxs">{(option as OptionsGroupType).header}</div></li>);
+                        result.unshift(<li className="dropdown-header"><div className="p-l-xxs p-t-xxs">{(option as OptionsGroupType).header}</div></li>);
                     }
 
                     return result;
