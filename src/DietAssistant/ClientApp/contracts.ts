@@ -122,7 +122,7 @@ function composeNutritions(name: string, nutritions: INutrition[]): INutrition {
         }
     }
 
-    const nutrients = Object.keys(result).map((type) => ({ type: NutrientType[type], grams: result[type] }));
+    const nutrients = _.map(result, (grams: number, type: number) => ({ type, grams }));
     return { name, unit, nutrients };
 }
 
