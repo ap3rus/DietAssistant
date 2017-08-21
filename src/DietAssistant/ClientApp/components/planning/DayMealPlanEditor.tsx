@@ -7,8 +7,8 @@ import { dropdown } from '../EasyGrid';
 import IngredientsGrid from '../IngredientsGrid';
 
 interface MealPlanEditorProps {
-    mealPlan: IDayMealPlan;
-    onChangeMealPlan: (this: void, mealPlan: IDayMealPlan) => void;
+    dayMealPlan: IDayMealPlan;
+    onChangeDayMealPlan: (this: void, mealPlan: IDayMealPlan) => void;
 }
 
 export default class MealPlanEditor extends React.Component<MealPlanEditorProps, {}> {
@@ -23,44 +23,44 @@ export default class MealPlanEditor extends React.Component<MealPlanEditorProps,
     }
 
     private handleChangeName(e) {
-        const nextMealPlan = { ...this.props.mealPlan, name: e.target.value };
-        this.props.onChangeMealPlan(nextMealPlan);
+        const nextMealPlan = { ...this.props.dayMealPlan, name: e.target.value };
+        this.props.onChangeDayMealPlan(nextMealPlan);
     }
 
     private handleChangeMealName(nextName, index) {
-        const nextMeals = [...this.props.mealPlan.meals];
-        nextMeals[index] = { ...this.props.mealPlan.meals[index], name: nextName };
-        const nextMealPlan = { ...this.props.mealPlan, meals: nextMeals };
-        this.props.onChangeMealPlan(nextMealPlan);
+        const nextMeals = [...this.props.dayMealPlan.meals];
+        nextMeals[index] = { ...this.props.dayMealPlan.meals[index], name: nextName };
+        const nextMealPlan = { ...this.props.dayMealPlan, meals: nextMeals };
+        this.props.onChangeDayMealPlan(nextMealPlan);
     }
 
     private handleChangeMealTime(nextTimeStr: string, index: number) {
-        const nextMeals = [...this.props.mealPlan.meals];
-        nextMeals[index] = { ...this.props.mealPlan.meals[index], time: Time.parse(nextTimeStr) };
-        const nextMealPlan = { ...this.props.mealPlan, meals: nextMeals };
-        this.props.onChangeMealPlan(nextMealPlan);
+        const nextMeals = [...this.props.dayMealPlan.meals];
+        nextMeals[index] = { ...this.props.dayMealPlan.meals[index], time: Time.parse(nextTimeStr) };
+        const nextMealPlan = { ...this.props.dayMealPlan, meals: nextMeals };
+        this.props.onChangeDayMealPlan(nextMealPlan);
     }
 
     private handleAddMeal() {
-        const lastTime = _.get(this.props.mealPlan.meals[this.props.mealPlan.meals.length - 1], 'time', new Time(0, 0)) as Time;
+        const lastTime = _.get(this.props.dayMealPlan.meals[this.props.dayMealPlan.meals.length - 1], 'time', new Time(0, 0)) as Time;
         const nextTime = new Time(lastTime.hours, lastTime.minutes);
         const meal: IMeal = { name: '', time: nextTime, foods: [] };
-        const nextMealPlan = { ...this.props.mealPlan, meals: [...this.props.mealPlan.meals, meal] };
-        this.props.onChangeMealPlan(nextMealPlan);
+        const nextMealPlan = { ...this.props.dayMealPlan, meals: [...this.props.dayMealPlan.meals, meal] };
+        this.props.onChangeDayMealPlan(nextMealPlan);
     }
 
     private handleChangeMealFoods(ingredients: IIngredient[], index: number) {
-        const nextMeals = [...this.props.mealPlan.meals];
-        nextMeals[index] = { ...this.props.mealPlan.meals[index], foods: ingredients };
-        const nextMealPlan = { ...this.props.mealPlan, meals: nextMeals };
-        this.props.onChangeMealPlan(nextMealPlan);
+        const nextMeals = [...this.props.dayMealPlan.meals];
+        nextMeals[index] = { ...this.props.dayMealPlan.meals[index], foods: ingredients };
+        const nextMealPlan = { ...this.props.dayMealPlan, meals: nextMeals };
+        this.props.onChangeDayMealPlan(nextMealPlan);
     }
 
     private handleRemoveMeal(meal: IMeal, index: number) {
-        const nextMeals = [...this.props.mealPlan.meals];
+        const nextMeals = [...this.props.dayMealPlan.meals];
         nextMeals.splice(index, 1);
-        const nextMealPlan = { ...this.props.mealPlan, meals: nextMeals };
-        this.props.onChangeMealPlan(nextMealPlan);
+        const nextMealPlan = { ...this.props.dayMealPlan, meals: nextMeals };
+        this.props.onChangeDayMealPlan(nextMealPlan);
     }
 
     public render() {
@@ -68,13 +68,13 @@ export default class MealPlanEditor extends React.Component<MealPlanEditorProps,
             <form>
                 <div className="form-group">
                     <label htmlFor="foodName">Name</label>
-                    <input type="text" className="form-control" id="foodName" placeholder="Name" value={this.props.mealPlan.name} onChange={this.handleChangeName} />
+                    <input type="text" className="form-control" id="foodName" placeholder="Name" value={this.props.dayMealPlan.name} onChange={this.handleChangeName} />
                 </div>
 
                 <div className="form-group">
                     <label>Meals</label>
                     <ol className="list-items">
-                        {_.map(this.props.mealPlan.meals, (meal, index) => (
+                        {_.map(this.props.dayMealPlan.meals, (meal, index) => (
                             <li key={index} className="list-items-row">
                                 <div data-toggle="collapse" aria-expanded="false" data-target={'#list-item-line-' + index}>
                                     <div className="row">
@@ -117,7 +117,7 @@ export default class MealPlanEditor extends React.Component<MealPlanEditorProps,
 
                 <div className="form-group">
                     <label>Nutrition facts</label>
-                    <NutrientsGrid isReadOnly={true} nutrients={getMealPlanNutrition(this.props.mealPlan).nutrients} />
+                    <NutrientsGrid isReadOnly={true} nutrients={getMealPlanNutrition(this.props.dayMealPlan).nutrients} />
                 </div>
             </form>
         );

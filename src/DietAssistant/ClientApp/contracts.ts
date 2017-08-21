@@ -71,7 +71,7 @@ export interface IMeal {
     foods: IIngredient[];
 }
 
-export interface IDayMealPlan {
+export interface IDayMealPlan extends IIdentifiable {
     name: string;
     meals: IMeal[];
 }
