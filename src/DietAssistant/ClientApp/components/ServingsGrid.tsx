@@ -35,6 +35,10 @@ export default class ServingsGrid extends React.Component<ServingsGridProps, {}>
     }
 
     private handleUpdate(serving: IServing, index: number) {
+        if (isNaN(serving.grams)) {
+            // todo show validation error
+            return;
+        }
         const nextServings = [...this.props.servings];
         nextServings[index] = { ...serving, grams: serving.grams };
         this.props.onChange(nextServings);
@@ -51,7 +55,7 @@ export default class ServingsGrid extends React.Component<ServingsGridProps, {}>
 
         const fields: Array<FieldDefinition<IServing>> = [
             createEditableField('Serving name', row => row.name, (row, name) => ({ ...row, name }), this.handleUpdate, createRowCreationFooter(this.handleCreate)),
-            createEditableField('Weight, grams', row => row.grams, (row, grams) => ({ ...row, grams }), this.handleUpdate)
+            createEditableField('Weight, grams', row => row.grams, (row, grams) => ({ ...row, grams: Number(grams) }), this.handleUpdate)
         ];
 
         if (this.props.allowEmpty || data.length > 1) {

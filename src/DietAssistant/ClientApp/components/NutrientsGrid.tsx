@@ -43,6 +43,11 @@ export default class NutrientsGrid extends React.Component<NutrientsGridProps, {
     }
 
     private handleUpdate(nutrient: INutrient, index: number) {
+        if (isNaN(nutrient.grams)) {
+            // todo show validation error
+            return;
+        }
+
         if (_.some(this.props.nutrients, (n: INutrient, i: number) => index !== i && n.type == nutrient.type)) {
             return;
         }
@@ -69,7 +74,7 @@ export default class NutrientsGrid extends React.Component<NutrientsGridProps, {
                     "(choose nutrient)",
                     !_.isUndefined(this.getNextAvailableNutrientType()) && createRowCreationFooter(this.handleCreate)
                 ),
-                createEditableField('Amount, grams', row => row.grams, (row, grams) => ({ ...row, grams }), this.handleUpdate),
+                createEditableField('Amount, grams', row => row.grams, (row, grams) => ({ ...row, grams: Number(grams) }), this.handleUpdate),
                 createRowRemovalField(this.handleRemove)
             ];
 

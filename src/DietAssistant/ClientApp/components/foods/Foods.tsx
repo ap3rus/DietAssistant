@@ -26,7 +26,7 @@ class Foods extends React.Component<FoodsProps, {}> {
     }
 
     handleCreateFood() {
-        const food = { name: '', unit: null, servings: [], nutrients: [] };
+        const food = { name: '', servings: [], nutrients: [] };
         this.props.upsertFood(food);
         this.props.history.push('/foods/edit');
     }

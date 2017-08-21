@@ -1,6 +1,6 @@
 ﻿import * as React from 'react';
 import * as _ from 'lodash';
-import { IIngredient, IServing, IFood, IRecipe, getIngredientWeight, getIngredientNutrition } from '../contracts';
+import { IIngredient, IServing, IFood, IRecipe, getIngredientWeight, getIngredientNutrition, getIngredientServings, compareServings } from '../contracts';
 import EasyGrid, { FieldDefinition, createRowRemovalField, createEditableField, createRowCreationFooter, createDropdownField, editable, dropdown } from './EasyGrid';
 import { connect } from 'react-redux';
 import { ApplicationState } from '../store';
@@ -60,15 +60,15 @@ class IngredientsGrid extends React.Component<IngredientsGridProps, {}> {
         const fields: Array<FieldDefinition<IIngredient>> = [
             {
                 header: 'Name',
-                content: (row: IIngredient, index) => row.food ?
-                    row.food.name :
+                content: (ingredient: IIngredient, index) => ingredient.food ?
+                    ingredient.food.name :
                     dropdown(
                         null,
                         [
                             { header: 'Foods', options: foodOptions },
                             { header: 'Recipes', options: recipeOptions }
                         ],
-                        (id) => this.handleUpdate({ ...row, food: _.find(this.props.foods, food => food.id == id) || _.find(this.props.recipes, recipe => recipe.id == id) }, index),
+                        (id) => this.handleUpdate({ ...ingredient, food: _.find(this.props.foods, food => food.id == id) || _.find(this.props.recipes, recipe => recipe.id == id) }, index),
                         "(find food)"),
                 footer: (foodOptions.length > 0 || recipeOptions.length > 0) ?
                     createRowCreationFooter(this.handleCreate) : null
@@ -79,11 +79,12 @@ class IngredientsGrid extends React.Component<IngredientsGridProps, {}> {
             },
             {
                 header: 'Unit',
-                content: (row, index) => row.food && row.food.servings.length && dropdown(
-                    row.unit && row.unit.grams,
-                    _.map(row.food.servings, (serving: IServing) => ({ value: serving.grams, content: serving.name })),
-                    (grams) => this.handleUpdate({ ...row, unit: _.find(row.food.servings, serving => serving.grams == grams) }, index),
-                    "(choose serving)")
+                content: (ingredient, index) => ingredient.food && dropdown(
+                    ingredient.unit,
+                    _.map(getIngredientServings(ingredient), (serving: IServing) => ({ value: serving, content: serving.name })),
+                    (serving) => this.handleUpdate({ ...ingredient, unit: serving }, index),
+                    "(choose serving)",
+                    compareServings)
             },
             { header: 'Weight, grams', content: (row: IIngredient) => row.food && getIngredientWeight(row) },
             createRowRemovalField(this.handleRemove)

@@ -36,11 +36,14 @@ export interface INutrient {
 export interface IServing {
     name: string;
     grams: number;
+    displayNameWithGrams?: string;
 }
+
+export const defaultNutritionUnit: IServing = { name: '100g', displayNameWithGrams: '100g', grams: 100 };
+export const serving1g: IServing = { name: 'g', displayNameWithGrams: '1g', grams: 1 };
 
 export interface INutrition {
     name: string;
-    unit: IServing;
     nutrients: INutrient[];
 }
 
@@ -51,7 +54,6 @@ export interface IFood extends INutrition, IIdentifiable {
 export interface IRecipe extends IIdentifiable {
     name: string;
     notes: string;
-    unit: IServing;
     servings: IServing[];
     ingredients: IIngredient[];
 }
@@ -80,21 +82,64 @@ export interface IDayMealLog {
     plan: IDayMealPlan;
 }
 
-function changeServing(nutrient: INutrient, from: IServing, to: IServing): INutrient {
+export function compareServings(serving1: IServing, serving2: IServing) {
+    if (!serving1 || !serving2) {
+        return false;
+    }
+
+    if (serving1 === serving2) {
+        return true;
+    }
+
+    return serving1.grams === serving2.grams;
+}
+
+export function changeServing(nutrient: INutrient, from: IServing, to: IServing): INutrient {
     return { type: nutrient.type, grams: nutrient.grams * to.grams / from.grams };
+}
+
+export function getServingNameWithGrams(serving: IServing) {
+    return serving.displayNameWithGrams ? serving.displayNameWithGrams : `${serving.name} - ${serving.grams}g`;
+}
+
+export function getFoodServings(food: IFood): IServing[] {
+    return [defaultNutritionUnit, serving1g, ...food.servings];
+}
+
+export function getRecipeServings(recipe: IRecipe): IServing[] {
+    return [
+        getRecipeServing(recipe),
+        serving1g,
+        defaultNutritionUnit,
+        ...recipe.servings
+    ];
+}
+
+export function getIngredientServings(ingredient: IIngredient): IServing[] {
+    if (!ingredient.food) {
+        return [];
+    }
+
+    return (ingredient.food as IRecipe).ingredients ? getRecipeServings(ingredient.food as IRecipe) : getFoodServings(ingredient.food as IFood);
 }
 
 export function getIngredientNutrition(ingredient: IIngredient): INutrition {
     const nutritionUnit = ingredient.unit && { name: `${ingredient.amount} x ${ingredient.unit.name}`, grams: ingredient.unit.grams * ingredient.amount };
+    let foodNutrients: INutrient[];
+    let ingredientNutrients: INutrient[];
+    let foodUnit: IServing;
+    if ((ingredient.food as IFood).nutrients) {
+        foodNutrients = (ingredient.food as IFood).nutrients;
+        foodUnit = defaultNutritionUnit;
+    } else {
+        foodNutrients = getRecipeNutrition(ingredient.food as IRecipe).nutrients;
+        foodUnit = getRecipeServing(ingredient.food as IRecipe);
+    }
 
-    const ingredientNutrients = (ingredient.food as IFood).nutrients ?
-        (ingredient.food as IFood).nutrients :
-        getRecipeNutrition(ingredient.food as IRecipe).nutrients;
-
-    const nutrients = ingredient.food.unit && ingredient.unit ?
-        ingredientNutrients.map(nutrient => changeServing(nutrient, ingredient.food.unit, nutritionUnit)) :
-        ingredientNutrients;
-    return { name: ingredient.food.name, unit: nutritionUnit, nutrients };
+    ingredientNutrients = ingredient.unit ?
+        foodNutrients.map(nutrient => changeServing(nutrient, foodUnit, nutritionUnit)) :
+        foodNutrients;
+    return { name: ingredient.food.name, nutrients: ingredientNutrients };
 }
 
 export function getIngredientWeight(ingredient: IIngredient) {
@@ -106,12 +151,10 @@ export function getIngredientWeight(ingredient: IIngredient) {
     return weight;
 }
 
-function composeNutritions(name: string, nutritions: INutrition[]): INutrition {
+function addUpNutritions(name: string, nutritions: INutrition[]): INutrition {
     const result: { [id: number]: number } = {};
-    const unit: IServing = { name: 'Serving', grams: 0 };
 
     for (let nutrition of nutritions) {
-        unit.grams += nutrition.unit && nutrition.unit.grams || 0;
         if (!nutrition.nutrients) {
             continue;
         }
@@ -123,22 +166,28 @@ function composeNutritions(name: string, nutritions: INutrition[]): INutrition {
     }
 
     const nutrients = _.map(result, (grams: number, type: number) => ({ type, grams }));
-    return { name, unit, nutrients };
+    return { name, nutrients };
+}
+
+export function getRecipeServing(recipe: IRecipe): IServing {
+    const result: IServing = {
+        name: 'Whole recipe',
+        grams: _.sumBy(recipe.ingredients, (ingredient) => ingredient.unit && ingredient.amount * ingredient.unit.grams || 0)
+    };
+
+    return result;
 }
 
 export function getRecipeNutrition(recipe: IRecipe): INutrition {
-    const nutrition = composeNutritions(recipe.name, _.filter(_.map(recipe.ingredients, ingredient => ingredient.food && getIngredientNutrition(ingredient))));
-    const nutrients = nutrition.unit && recipe.unit ?
-        _.map(nutrition.nutrients, nutrient => changeServing(nutrient, nutrition.unit, recipe.unit)) :
-        nutrition.nutrients;
-    return { name: recipe.name, unit: recipe.unit, nutrients };
+    const nutrition = addUpNutritions(recipe.name, _.filter(_.map(recipe.ingredients, ingredient => ingredient.food && getIngredientNutrition(ingredient))));
+    return nutrition;
 }
 
 export function getMealNutrition(meal: IMeal): INutrition {
-    return composeNutritions(meal.name, _.filter(_.map(meal.foods, ingredient => ingredient.food && getIngredientNutrition(ingredient))));
+    return addUpNutritions(meal.name, _.filter(_.map(meal.foods, ingredient => ingredient.food && getIngredientNutrition(ingredient))));
 }
 
 export function getMealPlanNutrition(plan: IDayMealPlan): INutrition {
     const mealsNutritions = _.map(plan.meals, meal => getMealNutrition(meal));
-    return composeNutritions(plan.name, mealsNutritions);
+    return addUpNutritions(plan.name, mealsNutritions);
 }

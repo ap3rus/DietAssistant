@@ -25,7 +25,7 @@ class Recipes extends React.Component<RecipesProps, {}> {
     }
 
     handleCreateRecipe() {
-        const recipe = { name: '', notes: '', unit: null, servings: [], ingredients: [] };
+        const recipe = { name: '', notes: '', servings: [], ingredients: [] };
         this.props.upsertRecipe(recipe);
         this.props.history.push('/recipes/edit');
     }

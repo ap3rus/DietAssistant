@@ -107,13 +107,13 @@ interface OptionsGroupType { header: React.ReactNode; options: OptionType[] }
 
 type OptionsType = OptionType[] | OptionsGroupType[];
 
-export function dropdown(value: any, options: OptionsType, onChange: (this: void, value: any, index: number) => void, defaultContent: React.ReactNode) {
+export function dropdown(value: any, options: OptionsType, onChange: (this: void, value: any, index: number) => void, defaultContent: React.ReactNode, valueEqualityComparer?: (this: void, a: any, b: any) => boolean) {
     const allOptions = _.flatMap(options, (option: OptionType | OptionsGroupType) => _.isArray((option as OptionsGroupType).options) ? (option as OptionsGroupType).options : option as OptionType);
 
     const d2 = (
         <div className="dropdown">
             <button className="btn btn-dropdown dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" role="button" aria-expanded="false">
-                {_.get(_.find(allOptions, (option) => option.value == value), 'content', defaultContent)}
+                {_.get(_.find(allOptions, (option) => option.value === value || _.isFunction(valueEqualityComparer) && valueEqualityComparer(option.value, value)), 'content', defaultContent)}
                 <span className="caret"></span>
             </button>
             <ul className="dropdown-menu" role="menu">

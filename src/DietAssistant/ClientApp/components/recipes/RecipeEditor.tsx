@@ -1,49 +1,67 @@
 ﻿import * as React from 'react';
 import * as _ from 'lodash';
-import { IRecipe, IFood, IServing, INutrient, NutrientType, IIngredient, getRecipeNutrition } from '../../contracts';
+import { IRecipe, IFood, IServing, INutrient, NutrientType, IIngredient, getRecipeNutrition, getRecipeServing, defaultNutritionUnit, changeServing, compareServings, getServingNameWithGrams, getRecipeServings } from '../../contracts';
 import ServingsGrid from '../ServingsGrid';
 import NutrientsGrid from '../NutrientsGrid';
 import IngredientsGrid from '../IngredientsGrid';
 import { dropdown } from '../EasyGrid';
+
+interface RecipeEditorState {
+    nutritionUnit?: IServing;
+}
 
 interface RecipeEditorProps {
     recipe: IRecipe;
     onChange: (this: void, recipe: IRecipe) => void;
 }
 
-export default class RecipeEditor extends React.Component<RecipeEditorProps, {}> {
-    constructor() {
+export default class RecipeEditor extends React.Component<RecipeEditorProps, RecipeEditorState> {
+    constructor(props) {
         super();
-        this.handleChangeUnit = this.handleChangeUnit.bind(this);
+
+        this.state = { nutritionUnit: getRecipeServing(props.recipe) };
+        this.handleSelectNutritionUnit = this.handleSelectNutritionUnit.bind(this);
         this.handleChangeServings = this.handleChangeServings.bind(this);
         this.handleChangeIngredients = this.handleChangeIngredients.bind(this);
         this.handleChangeName = this.handleChangeName.bind(this);
     }
 
-    private handleChangeUnit(grams, selectedIndex) {
-        const nextUnit = this.props.recipe.servings[selectedIndex];
-        const nextRecipe = { ...this.props.recipe, unit: nextUnit };
-        this.props.onChange(nextRecipe);
+    private handleSelectNutritionUnit(unit: IServing, selectedIndex: number) {
+        this.setState({ nutritionUnit: unit });
     }
 
-    handleChangeServings(servings: IServing[]) {
+    private handleChangeServings(servings: IServing[]) {
         const nextRecipe = { ...this.props.recipe, servings };
-        if (servings.length > 0 &&
-            (!nextRecipe.unit || !_.includes(_.map(servings, (serving) => serving.grams), nextRecipe.unit.grams))) {
-
-            nextRecipe.unit = servings[0];
-        }
         this.props.onChange(nextRecipe);
     }
 
-    handleChangeIngredients(ingredients: IIngredient[]) {
+    private handleChangeIngredients(ingredients: IIngredient[]) {
+        const isRecipeServingSelected = compareServings(this.state.nutritionUnit, getRecipeServing(this.props.recipe));
         const nextRecipe = { ...this.props.recipe, ingredients };
         this.props.onChange(nextRecipe);
+        if (isRecipeServingSelected) {
+            this.handleSelectNutritionUnit(getRecipeServing(nextRecipe), 0);
+        }
     }
 
-    handleChangeName(e) {
+    private handleChangeName(e) {
         const nextRecipe = { ...this.props.recipe, name: e.target.value };
         this.props.onChange(nextRecipe);
+    }
+
+    private getNutrients() {
+        const nutrients = getRecipeNutrition(this.props.recipe).nutrients;
+        const recipeServing = getRecipeServing(this.props.recipe);
+
+        const result = this.state.nutritionUnit ?
+            _.map(nutrients, (nutrient) => changeServing(nutrient, recipeServing, this.state.nutritionUnit)) :
+            nutrients;
+
+        return result;
+    }
+
+    private getServings() {
+        return getRecipeServings(this.props.recipe);
     }
 
     public render() {
@@ -56,7 +74,7 @@ export default class RecipeEditor extends React.Component<RecipeEditorProps, {}>
                 </div>
                 <div className="form-group">
                     <label>Servings</label>
-                    <ServingsGrid onChange={this.handleChangeServings} servings={this.props.recipe.servings} />
+                    <ServingsGrid onChange={this.handleChangeServings} servings={this.props.recipe.servings} allowEmpty />
                 </div>
                 <div className="form-group">
                     <label>Ingredients</label>
@@ -71,13 +89,14 @@ export default class RecipeEditor extends React.Component<RecipeEditorProps, {}>
                     <label>Nutrients per</label>
                     <div>
                         {dropdown(
-                            _.get(this.props.recipe.unit, 'grams'),
-                            _.map(this.props.recipe.servings, (serving, index) => ({ content: `${serving.name} - ${serving.grams}g`, value: serving.grams })),
-                            this.handleChangeUnit,
-                            '(select serving)'
+                            this.state.nutritionUnit,
+                            _.map(this.getServings(), (serving, index) => ({ content: getServingNameWithGrams(serving), value: serving })),
+                            this.handleSelectNutritionUnit,
+                            '(select serving)',
+                            compareServings
                         )}
                     </div>
-                    <NutrientsGrid nutrients={getRecipeNutrition(this.props.recipe).nutrients} isReadOnly={true} />
+                    <NutrientsGrid nutrients={this.getNutrients()} isReadOnly={true} />
                 </div>
             </form>
         );
