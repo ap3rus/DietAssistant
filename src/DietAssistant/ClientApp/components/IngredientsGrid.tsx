@@ -7,6 +7,10 @@ import { ApplicationState } from '../store';
 
 class EasyGridWrapper extends EasyGrid<IIngredient> { }
 
+interface IngredientsGridState {
+    searchFoodStr?: string;
+}
+
 interface IngredientsGridProps {
     unavailableFoodIds?: string[];
     unavailableRecipeIds?: string[];
@@ -16,7 +20,7 @@ interface IngredientsGridProps {
     onChange: (this: void, ingredients: IIngredient[]) => void;
 }
 
-class IngredientsGrid extends React.Component<IngredientsGridProps, {}> {
+class IngredientsGrid extends React.Component<IngredientsGridProps, IngredientsGridState> {
     static defaultProps: Partial<IngredientsGridProps> = {
         unavailableFoodIds: [],
         unavailableRecipeIds: [],
@@ -26,10 +30,13 @@ class IngredientsGrid extends React.Component<IngredientsGridProps, {}> {
 
     constructor() {
         super();
+
+        this.state = {};
         this.handleChange = this.handleChange.bind(this);
         this.handleCreate = this.handleCreate.bind(this);
         this.handleRemove = this.handleRemove.bind(this);
         this.handleUpdate = this.handleUpdate.bind(this);
+        this.handleSearchFood = this.handleSearchFood.bind(this);
     }
 
     private handleChange({ data }: { data: IIngredient[] }) {
@@ -51,13 +58,18 @@ class IngredientsGrid extends React.Component<IngredientsGridProps, {}> {
         const nextIngredients = [...this.props.ingredients];
         nextIngredients[index] = ingredient;
         this.props.onChange(nextIngredients);
+        this.setState({ searchFoodStr: null });
+    }
+
+    private handleSearchFood(searchFoodStr) {
+        this.setState({ searchFoodStr });
     }
 
     public render() {
-        const foodOptions = _.map(_.reject(this.props.foods, (food) => _.includes(this.props.unavailableFoodIds, food.id)), (food: IFood) => ({ value: food.id, content: food.name }));
-        const recipeOptions = _.map(_.reject(this.props.recipes, (recipe) => _.includes(this.props.unavailableRecipeIds, recipe.id)), (recipe: IRecipe) => ({ value: recipe.id, content: recipe.name }));
+        const foodOptions = _.map(_.reject(this.props.foods, (food) => _.includes(this.props.unavailableFoodIds, food.id) || this.state.searchFoodStr && !_.includes(food.name.toLowerCase(), this.state.searchFoodStr.toLowerCase())), (food: IFood) => ({ value: food.id, content: food.name }));
+        const recipeOptions = _.map(_.reject(this.props.recipes, (recipe) => _.includes(this.props.unavailableRecipeIds, recipe.id) || this.state.searchFoodStr && !_.includes(recipe.name.toLowerCase(), this.state.searchFoodStr.toLowerCase())), (recipe: IRecipe) => ({ value: recipe.id, content: recipe.name }));
 
-        const fields: Array<FieldDefinition<IIngredient>> = [
+        const fields: FieldDefinition<IIngredient>[] = [
             {
                 header: 'Name',
                 content: (ingredient: IIngredient, index) => ingredient.food ?
@@ -65,6 +77,12 @@ class IngredientsGrid extends React.Component<IngredientsGridProps, {}> {
                     dropdown(
                         null,
                         [
+                            {
+                                header: null, options: [{
+                                    value: undefined, content: (
+                                        <div className="form-group">{editable(this.state.searchFoodStr || '', this.handleSearchFood)}</div>
+                                    )}]
+                            },
                             { header: 'Foods', options: foodOptions },
                             { header: 'Recipes', options: recipeOptions }
                         ],
