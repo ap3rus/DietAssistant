@@ -1,10 +1,7 @@
 {
-<<<<<<< HEAD
-  "name": "DietAssistant",
-  "private": true,
-=======
   "name": "diet-assistant",
->>>>>>> Add winstrap package
+  "private": true,
+  "license": "Proprietary license",
   "version": "0.0.0",
   "dependencies": {
     "@types/history": "4.6.0",
@@ -40,6 +37,7 @@
     "react-router-dom": "4.1.1",
     "react-router-redux": "5.0.0-alpha.6",
     "redux": "3.7.1",
+    "react-uwp": "^1.1.3",
     "redux-thunk": "2.2.0",
     "style-loader": "0.18.2",
     "typescript": "2.4.1",
@@ -47,7 +45,7 @@
     "uuid": "^3.1.0",
     "webpack": "2.5.1",
     "webpack-hot-middleware": "2.18.2",
-    "webpack-merge": "4.1.0"
+    "webpack-merge": "4.1.0",
     "winstrap": "^0.5.11"
   },
   "devDependencies": {
