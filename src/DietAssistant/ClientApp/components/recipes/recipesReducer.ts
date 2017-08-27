@@ -1,4 +1,4 @@
-﻿import { Reducer } from 'redux';
+﻿import { Reducer, Action } from 'redux';
 import { IRecipe } from '../../contracts';
 import { KnownAction, SET_RECIPES, SET_SELECTED_RECIPE } from './recipesActions';
 
@@ -12,7 +12,8 @@ const defaultState: RecipesState = {
     selectedRecipe: null
 };
 
-export const recipesReducer: Reducer<RecipesState> = (state: RecipesState = defaultState, action: KnownAction) => {
+export const recipesReducer: Reducer<RecipesState> = (state: RecipesState = defaultState, incomingAction: Action) => {
+    const action = incomingAction as KnownAction;
     switch (action.type) {
         case SET_RECIPES:
             return { ...state, recipes: action.recipes };

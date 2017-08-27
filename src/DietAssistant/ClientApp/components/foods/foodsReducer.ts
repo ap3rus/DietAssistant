@@ -1,4 +1,4 @@
-﻿import { Reducer } from 'redux';
+﻿import { Reducer, Action } from 'redux';
 import { IFood } from '../../contracts';
 import { KnownAction, SET_FOODS, SET_SELECTED_FOOD } from './foodsActions';
 
@@ -12,7 +12,8 @@ const defaultState: FoodsState = {
     selectedFood: null
 };
 
-export const foodsReducer: Reducer<FoodsState> = (state: FoodsState = defaultState, action: KnownAction) => {
+export const foodsReducer: Reducer<FoodsState> = (state: FoodsState = defaultState, incomingAction: Action) => {
+    const action = incomingAction as KnownAction;
     switch (action.type) {
         case SET_FOODS:
             return { ...state, foods: action.foods };
