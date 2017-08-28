@@ -4,6 +4,7 @@ export interface IRepository<T> {
     getAll(): T[];
     get(id: string): T;
     save(id: string, item: T);
+    saveAll(records: Array<{ id: string, item: T }>);
     remove(id: string);
 }
 
@@ -34,6 +35,12 @@ export class LocalStorageRepository<T> implements IRepository<T> {
 
     public save(id: string, item: T) {
         localStorage.setItem(this.prefix + id, JSON.stringify(item));
+    }
+
+    public saveAll(records: Array<{ id: string, item: T }>) {
+        _.forEach(records, ({ id, item }) => {
+            this.save(id, item);
+        });
     }
 
     public remove(id: string) {

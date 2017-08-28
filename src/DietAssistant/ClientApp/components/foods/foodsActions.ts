@@ -38,6 +38,7 @@ export const actionCreators = {
         dispatch(actionCreators.setFoods(nextFoods));
         dispatch(actionCreators.setSelectedFood(nextFood));
         repository.save(nextFood.id, nextFood);
+        //repository.saveAll(_.map(nextFoods, (food) => ({ id: food.id, item: food })));
     },
     removeFood: (food: IFood): AppThunkAction<KnownAction> => (dispatch, getState) => {
         const nextFoods = [...getState().foods.foods || []];

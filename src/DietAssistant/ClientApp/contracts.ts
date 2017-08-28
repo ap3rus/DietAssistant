@@ -21,11 +21,15 @@ export interface IIdentifiable {
 }
 
 export enum NutrientType {
-    Carbs,
-    Fat,
-    Protein,
-    Sodium,
-    Sugars
+    Carbs = 0,
+    Fats = 1,
+    Proteins = 2,
+    Sodium = 3,
+    Sugars = 4,
+    Fiber = 5,
+    SaturatedFats = 6,
+    PolyunsaturatedFats = 7,
+    MonounsaturatedFats = 8
 }
 
 export interface INutrient {

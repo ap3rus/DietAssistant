@@ -66,7 +66,17 @@ class IngredientsGrid extends React.Component<IngredientsGridProps, IngredientsG
     }
 
     public render() {
-        const foodOptions = _.map(_.reject(this.props.foods, (food) => _.includes(this.props.unavailableFoodIds, food.id) || this.state.searchFoodStr && !_.includes(food.name.toLowerCase(), this.state.searchFoodStr.toLowerCase())), (food: IFood) => ({ value: food.id, content: food.name }));
+        const foodOptions = _.map(
+            _.reject(
+                this.props.foods,
+                (food) =>
+                    _.includes(this.props.unavailableFoodIds, food.id) ||
+                    this.state.searchFoodStr &&
+                    _.some(this.state.searchFoodStr.toLowerCase().split(' '), searchStr => !_.includes(food.name.toLowerCase(), searchStr))
+            ),
+            (food: IFood) => ({ value: food.id, content: food.name })
+        );
+
         const recipeOptions = _.map(_.reject(this.props.recipes, (recipe) => _.includes(this.props.unavailableRecipeIds, recipe.id) || this.state.searchFoodStr && !_.includes(recipe.name.toLowerCase(), this.state.searchFoodStr.toLowerCase())), (recipe: IRecipe) => ({ value: recipe.id, content: recipe.name }));
 
         const fields: FieldDefinition<IIngredient>[] = [
